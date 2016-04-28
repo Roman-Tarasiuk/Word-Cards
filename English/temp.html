@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>> > > Temp</title>
+    
+    <style>
+        ::-moz-selection {
+            color: black;
+            background: #9bf;
+        }
+
+        ::selection {
+            color: black;
+            background: #9bf;
+        }
+    </style>
+</head>
+
+<body>
+    <p style='color: #999'>Your earlier saved vocabularies:</p>
+    Append file: 
+    <input type=file accept='text/plain' onchange='openFile(event)' style='padding: 10px;'>
+    <input type=button value='Clear' onclick='document.getElementById("temp").value=""'>
+    <br>
+    <textarea id='temp' style="width: 960px; height: 260px; font-size: 14pt;"></textarea>
+    <br>
+    <p style='color: #999'>You also can use <a href='super_search.html'>'Super search'</a> utility for more convenient search</p>
+    
+    <!-- End of body elements -->
+    
+    <script>
+        function openFile(event) {
+            var input = event.target;
+
+            var reader = new FileReader();
+            reader.onload = function(){
+                var temp = document.getElementById('temp');
+                if (temp.value == '') {
+                    temp.value = reader.result;
+                }
+                else {
+                    temp.value += '\n' + reader.result;
+                }
+            };
+            
+            reader.readAsText(input.files[0]);
+        };
+    </script>
+</body>
+</html>

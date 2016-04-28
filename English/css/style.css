@@ -1,0 +1,185 @@
+* {
+    margin: 0;
+}
+
+html, body {
+    height: 100%;
+}
+
+.navigate {
+    float: left;
+    width: 50px;
+    height: 100vh;
+    text-align: center;
+    position: fixed;
+    cursor: pointer;
+}
+
+#moveLeft {
+    background: url(../img/navigate_left_48.png) no-repeat center center;
+    background-color: #f2f2f2;
+}
+
+#moveRight {
+    margin-left: -20px;
+    left: calc(100% - 30px);
+    background: url(../img/navigate_right_48.png) no-repeat center center;
+    background-color: #f2f2f2;
+}
+
+.info {
+    width: calc(100% - 100px - 20px); /* Navigation panes and padding */
+    min-height: calc(100vh - 20px);
+    /* background-color: #ff9; */
+    /* background-color: #f2f2f2; */
+    background-color: #e6ffe6;
+    float: left;
+    padding: 10px;
+    position: relative;
+    left: 50px;
+}
+
+#settingsButton {
+    position: relative;
+    top: 0;
+    left: calc(100% - 50px);
+    width: 50px;
+    height: 50px;
+    background-color: green;
+    background: url(../img/settings.png) no-repeat center center;
+    float: left;
+}
+
+#settings {
+    position: relative;
+    top: 0;
+    /* left: -50px; */
+    /* float: left; */
+    display: inline;
+}
+
+#audioPath {
+    width: 500px;
+}
+
+input[type=checkbox],
+input[type=radio] {
+    width: 40px;
+    height: 40px;
+    vertical-align: middle;
+}
+
+input[type=text] {
+    padding: 10px;
+}
+
+#wordCard {
+    position: relative;
+    top: 0;
+    float: left;
+    left: -50px;
+    width: calc(100% - 50px);
+    /* padding: 25px; */
+}
+
+#vocabulary {
+    width: 800px;
+    height: 237px;
+}
+
+#word {
+    font-size: 24pt;
+    font-family: sans-serif;
+    color: green;
+}
+
+a {
+    text-decoration: none;
+}
+
+span {
+    vertical-align: middle;
+}
+
+.bre {
+    color: #07255e;
+    visibility: hidden;
+}
+
+.name {
+    color: #8f0610;
+    visibility: hidden;
+}
+
+img {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    vertical-align: middle;
+}
+
+#pos {
+    color: #757575;
+    margin-top: 12px;
+    font-family: sans-serif;
+}
+
+#playAll {
+    color: #aaa;
+    margin-left: 10px;
+    visibility: hidden;
+}
+
+#transcription, #translation {
+    margin-top: 5px;
+    margin-bottom: 15px;
+    font-family: sans-serif;
+}
+
+#transcription {
+    font-size: 16pt;
+    color: #757575;
+}
+
+#translation {
+    font-size: 20pt;
+    color: #000;
+}
+
+#comment {
+    /*margin-top: 5px;*/
+    font-family: sans-serif;
+}
+
+hr {
+    color: #fff;
+}
+
+#examples {
+    color: #077;
+    margin-top: 20px;
+    font-size: 16pt;
+    font-family: sans-serif;
+}
+
+/**/
+
+exmpl {
+    font-weight: bold;
+    color: limegreen;
+}
+
+exmpla {
+    color: #39f;
+}
+
+oald8 {
+    color: #426c95;
+}
+
+phr {
+    text-decoration: underline;
+    -moz-text-decoration-style: dotted;
+         text-decoration-style: dotted;
+    -moz-text-decoration-color: #32CD32;
+         text-decoration-color: #32CD32;
+}

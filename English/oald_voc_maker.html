@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>OALD Vocabulary Maker</title>
+    <link rel="shortcut icon" href="img/worker-32.png">
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+
+    <link rel="stylesheet" href="css/jquery-ui.min.css" type="text/css" media="all">
+    <style>
+        exmpl {
+            font-weight: bold;
+            color: limegreen;
+        }
+
+        exmpla {
+            color: #39f;
+        }
+
+        oald8 {
+            color: #426c95;
+        }
+
+        phr {
+            text-decoration: underline;
+            -moz-text-decoration-style: dotted;
+            text-decoration-style: dotted;
+            -moz-text-decoration-color: #32CD32;
+            text-decoration-color: #32CD32;
+        }
+
+        .tagButton {
+            color: #bbb;
+            background-color: #444;
+        }
+
+        .convenientWidth {
+            width: 75%;
+        }
+
+        .convenientFont {
+            font-size: 24px;
+        }
+
+        .split {
+            list-style-image: url('img/Devices-media-optical-audio-icon.png');
+        }
+
+        ::-moz-selection {
+            color: black;
+            background: #9bf;
+        }
+
+        ::selection {
+            color: black;
+            background: #9bf;
+        }
+    </style>
+</head>
+
+<body onload="processOald()">
+    <div>
+        <span style="color:#777">Format / Check:</span>
+        <br>
+        <textarea id="txtInfo" class="convenientWidth" style="height:150px; font-family: times, serif; font-size: 20px;"></textarea>
+        <br>
+        <input type=button value="Pdf clipboard join" onclick="pdfClipboardJoin()">
+        <input type=button value="<exmpl>" onclick="surroundWithTag('exmpl')" class="tagButton">
+        <input type=button value="<exmpla>" onclick="surroundWithTag('exmpla')" class="tagButton">
+        <input type=button value="<phr>" onclick="surroundWithTag('phr')" class="tagButton">
+        <input type=button value="<i>" onclick="surroundWithTag('i')" class="tagButton" style="font-style: italic; color: #fff">
+        <input type=button value="<b>" onclick="surroundWithTag('b')" class="tagButton" style="font-weight: bold; color: #fff">
+        <input type=button value="<code>" onclick="surroundWithTag('code')" class="tagButton">
+        <input type=button value="Show entry template" onclick="entryTemplate()">
+        <input type=button value="Remove <tags>" onclick="removeAllTags()" style="color:#0298bd; background-color:#c9f0c9">
+        <input type=button value="Remove **placeholders**" onclick="removePlaceholders()" style="color:#0298bd; background-color:#c9f0c9">
+        <input type=button value="↓" title="Move examples to temporary storage" onclick="appendExample()" style="background-color:#7be1fa">
+        <br>
+        <input type=checkbox id='processChangesChk' onclick='switchProcessState()'> Process changes automatically
+        <input type=button id='processChangesBtn' value='Process changes'  onclick='processChangesManually()'>
+    </div>
+    <p id="oald" class="convenientWidth convenientFont" ondblclick="selectPWithoutTail()"></p>
+    <div>
+        <span style="color:#777">Temporary storage - save text temporarily here:</span>
+        <br>
+        <textarea id="temporaryStorage" class="convenientWidth" style="height:150px; font-family: times, serif;" ondblclick="selectWithoutTail(document.getElementById('temporaryStorage'))"></textarea>
+        <br>
+        <input type=button value='Save' onclick='saveTextAsFile()' style='padding: 5px;'>
+    </div>
+
+    <!-- End of body elements -->
+
+    <script>
+        function tripleClick(elementName, f1, f2, f3) {
+            var timeout1;
+            var timeout2;
+            var dblClick = false;
+
+            var element = document.querySelector(elementName);
+            if (element == null) {
+                element = document.getElementById(elementName);
+            }
+
+            element.addEventListener('click', function (evt) {
+                if (evt.detail === 1) {
+
+                    // Initialization of global variable
+                    //
+                    if ('selectionStart' in element) {
+                        selectionStart = element.selectionStart;
+                    }
+
+                    timeout1 = setTimeout(function(){
+                        if (!dblClick) {
+                            if (f1 != null) {
+                                f1();
+                            }
+                        }
+                        dblClick = false;
+                    }, 100);
+                }
+                else if (evt.detail === 2) {
+                    dblClick = true;
+                    timeout2 = setTimeout(function() {
+                        clearTimeout(timeout1);
+                        dblClick = false;
+                        if (f2 != null) {
+                            f2();
+                        }
+                    }, 100);
+                }
+                else if (evt.detail === 3) {
+                    clearTimeout(timeout1);
+                    clearTimeout(timeout2);
+                    dblClick = false;
+                    if (f3 != null) {
+                        f3();
+                    }
+                }
+            });
+        }
+
+        tripleClick('txtInfo',
+            null,
+            function() {
+                selectWithoutTail(document.getElementById('txtInfo'));
+            },
+            function() {
+                selectExampleTriple(document.getElementById('txtInfo'));
+            }
+        )
+
+        $("#txtInfo").resizable({
+            resize: setSrchResultsWidth
+        });
+
+        function setSrchResultsWidth() {
+             var w = $("#txtInfo").width();
+             $("#oald").width(w);
+        }
+
+        setSrchResultsWidth();
+
+        function beforeUnload()
+        {
+            if(document.getElementById("temporaryStorage").value != '') {
+                return "Є незбережені дані. Ви дійсно хочете вийти?";
+            }
+            /* Doesn't work
+            if(!window.confirm) {
+                return "Mozilla. Є незбережені дані. Ви дійсно хочете вийти?";
+            }
+            else {
+                var ask = window.confirm("Internet Explorer. Є незбережені дані. Ви дійсно хочете вийти?");
+                if(ask) {
+                    return "QWE";
+                }
+                else {
+                    window.close();
+                }
+            }
+            //*/
+        }
+
+        window.onbeforeunload = beforeUnload;
+
+        var replaceToLiRe = new RegExp(" ### ", "g");
+        var replaceNewLineRe = new RegExp("\n", "g");
+        var replaceAllTagsRe = /<(\/?)(exmpl|exmpla|oald8|phr|i|b|code)>/g;
+        var replaceAllTagsBackRe = /<(\/?)(?:_)(exmpl|exmpla|oald8|phr|i|b|code)>/g;
+        var nonOALDTagsRe = /((<)(?!(?:\/*_exmpl|\/*_exmpla|\/*_oald8|\/*_phr|\/*_i|\/*_b|\/*_code)))(.*?)(>)/g;
+
+        var oaldSeparator = ' – ';
+
+        var selectionStart;
+
+        function processOald() {
+            if (!document.getElementById('processChangesChk').checked) {
+                return;
+            }
+            
+            var text = document.getElementById("txtInfo").value;
+
+            if(text == '') {
+                document.getElementById("oald").innerHTML = '';
+                return;
+            }
+
+            text = text.replace(replaceAllTagsRe, "<$1_$2>");
+            text = text.replace(nonOALDTagsRe, "&lt$3&gt");
+            text = text.replace(replaceAllTagsBackRe, "<$1$2>");
+
+            var rows = text.split('\n');
+            text = '';
+            for(var r in rows) {
+                var examplesSeparatorPos = rows[r].indexOf(oaldSeparator);
+                examplesSeparatorPos = rows[r].indexOf(oaldSeparator, examplesSeparatorPos + 1);
+                examplesSeparatorPos = rows[r].indexOf(oaldSeparator, examplesSeparatorPos + 1);
+                examplesSeparatorPos = rows[r].indexOf(oaldSeparator, examplesSeparatorPos + 1);
+                examplesSeparatorPos = rows[r].indexOf(oaldSeparator, examplesSeparatorPos + 1);
+                var audioSeparatorPos = rows[r].indexOf(oaldSeparator, examplesSeparatorPos + 1);
+
+                if(examplesSeparatorPos > -1) {
+                    text += "<p class='convenientFont'>" + rows[r].substring(0, examplesSeparatorPos) + '<br>';
+                    text += "<ul> <li class='convenientFont'>" + rows[r].substring(examplesSeparatorPos + oaldSeparator.length, audioSeparatorPos).replace(replaceToLiRe, "<li class='convenientFont'>") + "</ul>";
+                    text += "<ul> <li class='convenientFont split'>" + rows[r].substring(audioSeparatorPos + oaldSeparator.length) + "</ul>";
+                }
+                else {
+                    text += "<p>" + "<ul> <li class='convenientFont'>" + rows[r].replace(replaceToLiRe, "<li>") + "</ul>";
+                }
+                text += '<hr></p>';
+            }
+            text = text.substring(0, text.length - 8);
+            document.getElementById("oald").innerHTML = text;
+        }
+
+        $('#txtInfo').bind('input propertychange', processOald);
+
+        function surroundWithTag(tag) {
+            var textComponent = document.getElementById('txtInfo');
+
+            if(textComponent.selectionStart == undefined) {
+                return;
+            }
+
+            var startPos = textComponent.selectionStart;
+            var endPos = textComponent.selectionEnd;
+            if(startPos != endPos) {
+                var selectedText = textComponent.value.substring(startPos, endPos);
+                var resultText = textComponent.value.substring(0, startPos)
+                                + '<' + tag + '>'
+                                + selectedText
+                                + '</' + tag + '>'
+                                + textComponent.value.substring(endPos, textComponent.value.length);
+
+                textComponent.value = resultText;
+                processOald();
+                textComponent.select();
+                textComponent.selectionStart = startPos + tag.length + 2;
+                textComponent.selectionEnd = textComponent.selectionStart + selectedText.length;
+            }
+        }
+
+        function pdfClipboardJoin() {
+            var txtInfo = document.getElementById('txtInfo');
+            if(replaceNewLineRe.test(txtInfo.value)) {
+                var replaceTwoNewLinesRe = new RegExp("\n\n", "g");
+                do {
+                    var length = txtInfo.value.length;
+                    txtInfo.value = txtInfo.value.replace(replaceTwoNewLinesRe, '\n');
+                } while (txtInfo.value.length != length);
+           
+                document.getElementById('txtInfo').value = document.getElementById('txtInfo').value.replace(replaceNewLineRe, " ");
+                processOald();
+
+                txtInfo.select();
+                txtInfo.selectionStart = 0;
+                txtInfo.selectionEnd = txtInfo.textLength;
+            }
+        }
+
+        function removeAllTags() {
+            if(replaceAllTagsRe.test(document.getElementById('txtInfo').value)) {
+                document.getElementById('txtInfo').value = document.getElementById('txtInfo').value.replace(replaceAllTagsRe, "");
+                processOald();
+            }
+        }
+
+        function selectWithoutTail(textArea) {
+            while(textArea.value[textArea.selectionEnd - 1] == " "
+                    || textArea.value[textArea.selectionEnd - 1] == "\t") {
+                textArea.selectionEnd--;
+            }
+            while(textArea.selectionEnd < textArea.value.length
+               && textArea.value[textArea.selectionEnd] != " "
+               && textArea.value[textArea.selectionEnd] != "\t"
+               && textArea.value[textArea.selectionEnd] != ","
+               && textArea.value[textArea.selectionEnd] != ";"
+               && textArea.value[textArea.selectionEnd] != '"') {
+                textArea.selectionEnd++;
+            }
+            while(textArea.selectionStart > 0
+               && textArea.value[textArea.selectionStart - 1] != "\n"
+               && textArea.value[textArea.selectionStart - 1] != " "
+               && textArea.value[textArea.selectionStart - 1] != "\t"
+               && textArea.value[textArea.selectionStart - 1] != ","
+               && textArea.value[textArea.selectionStart - 1] != ";"
+               && textArea.value[textArea.selectionStart - 1] != '"') {
+                textArea.selectionStart--;
+            }
+        }
+
+        function selectPWithoutTail() {
+            var range = window.getSelection().getRangeAt(0);
+            var sel = range.toString();
+
+            var decrementOn = 0;
+            var end = sel.length - 1;
+            while((end >=0) && (sel[end] == ' ' || sel[end] == '\t')) {
+                end--;
+                window.getSelection().modify("extend", "backward", "character");
+            }
+        }
+
+        function selectExampleTriple(textArea) {
+            var end = selectionStart;
+            while (end < (textArea.value.length) && textArea.value[end] != '\n' && textArea.value[end] != '\r\n') {
+                end++;
+            }
+
+            var audioSeparatorPos = textArea.value.substring(0, end).lastIndexOf(oaldSeparator);
+
+            if (selectionStart < audioSeparatorPos) {
+                var begin = selectionStart;
+                while (begin > 0 && textArea.value[begin] != '\n' && textArea.value[begin] != '\r\n') {
+                    begin--;
+                }
+
+                textArea.selectionStart = begin;
+                textArea.selectionEnd = audioSeparatorPos;
+            }
+            else {
+                textArea.selectionStart = audioSeparatorPos;
+                textArea.selectionEnd = end;
+            }
+        }
+
+        function appendExample() {
+            var txtInfoComponent = document.getElementById("txtInfo");
+
+            if(txtInfoComponent.value != '') {
+                if(document.getElementById("temporaryStorage").value == '') {
+                    document.getElementById("temporaryStorage").value = document.getElementById("txtInfo").value;
+                }
+                else {
+                    document.getElementById("temporaryStorage").value += '\n' + document.getElementById("txtInfo").value;
+                }
+                txtInfoComponent.value = '';
+                //processOald();
+                processChangesManually();
+
+                var temporaryStorageComponent = document.getElementById("temporaryStorage");
+                temporaryStorageComponent.scrollTop = temporaryStorageComponent.scrollHeight;
+            }
+            txtInfoComponent.select();
+        }
+       
+        function saveTextAsFile() {
+            var textToWrite = document.getElementById("temporaryStorage").value;
+            var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
+            var fileNameToSaveAs = 'filename.txt';
+
+            var downloadLink = document.createElement("a");
+            downloadLink.download = fileNameToSaveAs;
+            downloadLink.innerHTML = "Download File";
+            if (window.webkitURL != null) {
+                // Chrome allows the link to be clicked
+                // without actually adding it to the DOM.
+                downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+            }
+            else {
+                // Firefox requires the link to be added to the DOM
+                // before it can be clicked.
+                downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+                downloadLink.onclick = destroyClickedElement;
+                downloadLink.style.display = "none";
+                document.body.appendChild(downloadLink);
+            }
+
+            downloadLink.click();
+        }
+       
+        function destroyClickedElement(event) {
+            document.body.removeChild(event.target);
+        }
+        
+        function entryTemplate() {
+            var template = "**word** – **part-of-speech** – **transcription** – **comments** – **translation** – **examples** – **audio-files-urls**";
+            
+            document.getElementById('txtInfo').value = 
+                document.getElementById('txtInfo').value != '' ?
+                    template + '\n' + document.getElementById('txtInfo').value :
+                    template;
+                    
+            processOald();
+        }
+        
+        function removePlaceholders() {
+            var placeholdersRE = /\*\*word\*\*|\*\*part-of-speech\*\*|\*\*transcription\*\*|\*\*comments\*\*|\*\*translation\*\*|\*\*examples\*\*|\*\*audio-files-urls\*\*/g;
+            var result = document.getElementById('txtInfo').value.replace(placeholdersRE, '');
+            document.getElementById('txtInfo').value = result;
+           
+            processOald();
+        }
+        
+        function switchProcessState() {
+            document.getElementById('processChangesBtn').disabled = !document.getElementById('processChangesBtn').disabled;
+        }
+
+        function processChangesManually() {
+            var checkedState = document.getElementById('processChangesChk').checked;
+           
+            document.getElementById('processChangesChk').checked = true;
+            processOald();
+            document.getElementById('processChangesChk').checked = checkedState;
+        }
+    </script>
+</body>
+</html>

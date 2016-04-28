@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Oald card</title>
+    <link rel="shortcut icon" href="img/icon.png">
+    
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+
+<body>
+    <div id="audioAutoRun"></div>
+
+    <div id="moveLeft" class="navigate" onclick="moveLeft()"></div>
+
+    <div id="info" class="info">
+        <div id="settingsButton" onclick="$('#settings').toggle(); $('#wordCard').toggle();"></div>
+
+        <div id="wordCard" style="display: none;">
+            <p id="word"></p>
+            <p id="pos"></p>
+            <div id="audioLinks"></div>
+            <p id="transcription"></p>
+            <p id="comment"></p>
+            <p id="translation"></p>
+            <hr>
+            <p id="examples"></p>
+            <p>
+                Go to word:
+                <input type=text id='goToWord'>
+                <input type=button onclick='goToWord()'>
+            </p>
+        </div>
+
+        <div id="settings">
+            <p>Audio path:</p>
+            <input type=text id="audioPath" value="Audio/Ogg/">
+            <br>
+            <span><input type=radio name="audioFormat" id="Ogg" checked> Ogg</span>
+            <span><input type=radio name="audioFormat" id="Mp3"> Mp3 (may not play on Android)</span>
+            <span><input type=checkbox id="autoplay" checked> Autoplay</span>
+            <br>
+            <p>Vocabulary (paste from clipboard or select file):
+                <input type=file accept='text/plain' onchange='openFile(event)' style='padding: 10px;'>
+                <input type=button value='Clear vocabulary' onclick='document.getElementById("vocabulary").value=""' style='padding: 10px;'>
+            </p>
+            <textarea id="vocabulary" style='margin-top: 5px;'></textarea>
+            <br>
+            Text scale (0 – 5; '.' for fixed-point number):
+            <input type=text id='scale' value='1'>
+            <input type=button value="Apply" onclick="init()" style='padding: 10px; margin-top: 5px;'></input>
+        </div>
+    </div>
+
+    <div id="moveRight" class="navigate" onclick="moveRight()"></div>
+
+    <!-- End of body elements -->
+
+    <script src="js/jquery.min.js"></script>
+
+    <script>
+        //
+        // To do: shuffle entries
+        //        go to some word (with index array)
+        //
+        
+        init();
+
+        var entries,
+            current = 0,
+            audios = null,
+            functions = null;
+
+        function play(index) {
+            autoplayOff();
+            audios[index].play();
+        }
+
+        function autoplay() {
+            initAutoplay();
+            if (audios != null) {
+                audios[0].play();
+            }
+        }
+
+        function moveRight() {
+            current++;
+            if (current == entries.length) {
+                current = 0;
+            }
+
+            autoplayOff();
+            audios = null;
+
+            showCurrent();
+        }
+
+        function moveLeft() {
+            current--;
+            if (current == -1) {
+                current = entries.length - 1;
+            }
+
+            autoplayOff();
+            audios = null;
+
+            showCurrent();
+        }
+
+        function init() {
+            $('#settings').toggle();
+            $('#wordCard').toggle();
+        
+            var text = $("#vocabulary").val();
+
+            var emptyEntriesExist = false;
+            var tmp = text.split("\n");
+            for (var i = 0; i < tmp.length; i++) {
+                if (tmp[i] == '') {
+                    entries = [];
+                    for (var i = 0; i < tmp.length; i++) {
+                        if (tmp[i] != '') {
+                            entries[entries.length] = tmp[i];
+                        }
+                    }
+                    emptyEntriesExist = true;
+                    break;
+                }
+            }
+            
+            if (!emptyEntriesExist) {
+                entries = tmp;
+            }
+            
+            //current = Math.floor(entries.length / 2);
+            current = 0;
+
+            functions = null;
+            audios = null;
+                
+            showCurrent();
+        };
+
+        function showCurrent() {
+            if (entries[current] == "") {
+                return;
+            }
+
+            var currentEntry = entries[current];
+            var parts = currentEntry.split(" – ");
+
+            $("#word").html(parts[0]);
+            $("#pos").html(parts[1]);
+
+            makeAudioHTML(parts[6]);
+            if (document.getElementById("autoplay").checked) {
+                autoplay();
+            }
+
+            $("#transcription").html(parts[2]);
+            $("#comment").html(parts[3] != "" ? parts[3] : "-");
+
+            $("#translation").html(parts[4]);
+            $("#examples").html(parts[5]);
+
+            applyFontSizes();
+            
+            document.title = parts[0] + " - Oald card";
+        }
+
+        function makeAudioHTML(txt) {
+            if (txt == "" || typeof txt == 'undefined' || txt == null) {
+                $("#audioLinks").html('');
+                return;
+            }
+
+            if (audios != null) {
+                return;
+            }
+
+            audios = [];
+            
+            var bre = "BrE";
+            var name = "NAmE";
+
+            var parts = txt.split("; ");
+
+            var audioLinksHTML = "";
+
+            var audioAutoRunElem = $("#audioAutoRun");
+            audioAutoRunElem.html("");
+
+            var path = $("#audioPath").val();
+            var isMp3 = document.getElementById("Mp3").checked;
+            
+            var currentIndex;
+
+            for (var i = 0; i < parts.length; i++) {
+                if (isMp3) {
+                    if (parts[i].toLowerCase().endsWith("ogg")) {
+                        continue;
+                    }
+                }
+                else { // "Ogg"
+                    if (parts[i].toLowerCase().endsWith("mp3")) {
+                        continue;
+                    }
+                }
+
+                currentIndex = audios.length;
+
+                var audioStr = "<audio id=\"audio" + currentIndex + "\">";
+                audioStr += "<source src=\"" + path + parts[i].substring(parts[i].lastIndexOf('/') + 1)
+                            + "\" type=\"" + (isMp3 ? "audio/mpeg\">" : "audio/ogg\">") + "</audio>";
+
+                audioAutoRunElem.append(audioStr);
+
+                audios[currentIndex] = document.getElementById("audio" + currentIndex);
+
+                var span = '<span id="audioSpn' + currentIndex + '"'
+                         + 'onclick="play(' + currentIndex + ')';
+                if (parts[i].startsWith(bre)) {
+                    span +=  '" class="bre"' + currentIndex + ')">';
+                    span += bre + '<img src="img/icon-audio-bre.png">';
+                }
+                else { // "NAmE"
+                    span +=  '" class="name"' + currentIndex + ')">';
+                    span += name + '<img src="img/icon-audio-name.png">';
+                }
+                span += '</span>';
+
+                audioLinksHTML += span + '\n';
+            }
+
+            audioLinksHTML += '<span id="playAll" onclick=autoplay()>Play all <img src="img/play-all-normal.png"></span>';
+
+            $("#audioLinks").html(audioLinksHTML);
+        }
+
+        function initAutoplay() {
+            console.log('initAutoplay()...');
+            
+            if (typeof audios == 'undefined' || audios == null) {
+                console.log("Exit initAutoplay(). (01)");
+                return;
+            }
+            if (functions != null) {
+                console.log("Exit initAutoplay(). (02)");
+                return;
+            }
+
+            functions = [];
+
+            function playNext(i) {
+                return function() {
+                    var span = document.getElementById('audioSpn' + (i + 1));
+                    span.style.visibility = 'visible';
+
+                    var element = document.getElementById('audio' + (i + 1));
+                    element.play();
+                };
+            }
+
+            for (var i = 0; i < audios.length - 1; i++) {
+                functions[i] = playNext(i);
+            }
+
+            functions[audios.length - 1] = function() {
+                document.getElementById('playAll').style.visibility = 'visible';
+            }
+
+            for (var i = 0; i < audios.length; i++) {
+                audios[i].addEventListener('ended',
+                    functions[i]
+                );
+            }
+
+            document.getElementById("audioSpn0").style.visibility = 'visible';
+            console.log('initAutoplay() end.')
+        }
+
+        function autoplayOff() {
+            if (typeof audios == 'undefined' || audios == null) {
+                //console.log("Exit autoplayOff(). (01)");
+                return;
+            }
+            if (functions == null) {
+                //console.log("Exit autoplayOff(). (02)");
+                return;
+            }
+
+            for (var i = 0; i < audios.length; i++) {
+                audios[i].removeEventListener('ended',
+                    functions[i]);
+            }
+            functions = null;
+        }
+        
+        // http://stackoverflow.com/questions/14446447/javascript-read-local-text-file
+        //
+        function openFile(event) {
+            var input = event.target;
+
+            var reader = new FileReader();
+            reader.onload = function(){
+                document.getElementById('vocabulary').value = reader.result;
+            };
+            
+            reader.readAsText(input.files[0]);
+        };
+        
+        function applyFontSizes() {
+            function scaleFont(element, defaultSize, scale) {
+                //var size = parseInt(element.style["font-size"]);
+                element.style["font-size"] = defaultSize * scale + 'pt';
+            }
+            
+            //*
+            var scale;
+            try {
+                scale = parseFloat(document.getElementById('scale').value);
+            }
+            catch (exception) {
+                scale = 1;
+            }
+            
+            if (scale <= 0) {
+                scale = 1;
+            }
+            else if (scale > 5) {
+                scale = 5;
+            }
+            
+            document.getElementById('scale').value = scale;
+            
+            scaleFont(document.getElementById('word'), 24, scale);
+            scaleFont(document.getElementById('pos'), 16, scale);
+            scaleFont(document.getElementById('transcription'), 16, scale);
+            scaleFont(document.getElementById('comment'), 16, scale);
+            scaleFont(document.getElementById('translation'), 20, scale);
+            scaleFont(document.getElementById('examples'), 16, scale);
+            
+            var spans = document.getElementsByTagName('span');
+            for (var s in spans) {
+                scaleFont(s, 16, scale);
+            }
+            //*/
+        }
+    </script>
+</body>
+</html>
