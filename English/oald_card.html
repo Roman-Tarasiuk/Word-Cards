@@ -25,11 +25,12 @@
             <p id="translation"></p>
             <hr>
             <p id="examples"></p>
-            <p>
+            <p><span id="progress">.../...</span></p>
+            <!-- <p>
                 Go to word:
                 <input type=text id='goToWord'>
                 <input type=button onclick='goToWord()'>
-            </p>
+            </p> -->
         </div>
 
         <div id="settings">
@@ -46,7 +47,7 @@
             </p>
             <textarea id="vocabulary" style='margin-top: 5px;'></textarea>
             <br>
-            Text scale (0 – 5; '.' for fixed-point number):
+            Text scale (0 – 5):
             <input type=text id='scale' value='1'>
             <input type=button value="Apply" onclick="init()" style='padding: 10px; margin-top: 5px;'></input>
         </div>
@@ -157,15 +158,27 @@
                 autoplay();
             }
 
-            $("#transcription").html(parts[2]);
+            $("#transcription").html(styleTranscription(parts[2]));
             $("#comment").html(parts[3] != "" ? parts[3] : "-");
 
             $("#translation").html(parts[4]);
             $("#examples").html(parts[5]);
-
-            applyFontSizes();
             
             document.title = parts[0] + " - Oald card";
+            
+            document.getElementById('progress').innerHTML = (current + 1) + '\/' + entries.length;
+
+            applyFontSizes();
+        }
+        
+        function styleTranscription(transcription) {
+            var mapObj = {
+                BrE:"<span class='breLight'>BrE</span>",
+                NAmE:"<span class='nameLight'>NAmE</span>"
+            };
+            return transcription.replace(/BrE|NAmE/g, function(matched){
+                return mapObj[matched];
+            });
         }
 
         function makeAudioHTML(txt) {
@@ -311,14 +324,19 @@
         
         function applyFontSizes() {
             function scaleFont(element, defaultSize, scale) {
-                //var size = parseInt(element.style["font-size"]);
-                element.style["font-size"] = defaultSize * scale + 'pt';
+                try {
+                    element.style["font-size"] = defaultSize * scale + 'pt';
+                }
+                catch (exception) {
+                    console.log('**applyFontSizes() exception...');
+                }
             }
             
-            //*
             var scale;
             try {
-                scale = parseFloat(document.getElementById('scale').value);
+                scale = document.getElementById('scale').value;
+                scale = scale.replace(',', '.');
+                scale = parseFloat(scale);
             }
             catch (exception) {
                 scale = 1;
@@ -341,10 +359,9 @@
             scaleFont(document.getElementById('examples'), 16, scale);
             
             var spans = document.getElementsByTagName('span');
-            for (var s in spans) {
-                scaleFont(s, 16, scale);
+            for (var i = 0; i < spans.length; i++) {
+                scaleFont(spans[i], 16, scale);
             }
-            //*/
         }
     </script>
 </body>

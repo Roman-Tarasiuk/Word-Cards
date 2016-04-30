@@ -61,11 +61,11 @@
 </head>
 
 <body onload="processOald()">
-    <div>
+    <div style='margin: 0;'>
         <span style="color:#777">Format / Check:</span>
         <br>
         <textarea id="txtInfo" class="convenientWidth" style="height:150px; font-family: times, serif; font-size: 20px;"></textarea>
-        <br>
+        <!-- <br> -->
         <input type=button value="Pdf clipboard join" onclick="pdfClipboardJoin()">
         <input type=button value="<exmpl>" onclick="surroundWithTag('exmpl')" class="tagButton">
         <input type=button value="<exmpla>" onclick="surroundWithTag('exmpla')" class="tagButton">
@@ -76,13 +76,17 @@
         <input type=button value="Show entry template" onclick="entryTemplate()">
         <input type=button value="Remove <tags>" onclick="removeAllTags()" style="color:#0298bd; background-color:#c9f0c9">
         <input type=button value="Remove **placeholders**" onclick="removePlaceholders()" style="color:#0298bd; background-color:#c9f0c9">
-        <input type=button value="↓" title="Move examples to temporary storage" onclick="appendExample()" style="background-color:#7be1fa">
-        <br>
-        <input type=checkbox id='processChangesChk' onclick='switchProcessState()'> Process changes automatically
-        <input type=button id='processChangesBtn' value='Process changes'  onclick='processChangesManually()'>
+        <input type=button value="  ↓  " title="Move examples to temporary storage" onclick="appendExample()" style="background-color:#7be1fa">
+        <!-- <br> -->
+        <div style='position: relative; left: 128px; margin: 0;'>
+            <input type=checkbox id='processChangesChk' onclick='switchProcessState()'> Process changes automatically
+            <input type=button id='processChangesBtn' value='Process changes'  onclick='processChangesManually()'>
+        </div>
     </div>
-    <p id="oald" class="convenientWidth convenientFont" ondblclick="selectPWithoutTail()"></p>
-    <div>
+    <span style="color:#777; margin: 10px 0 0 0;">Preview:</span>
+    <hr style='margin: 0;' class='convenientWidth'>
+    <p id="oald" class="convenientWidth convenientFont" style='margin: 0 !important;' ondblclick="selectPWithoutTail()">...</p>
+    <div style='margin: 10px 0 0 0;'>
         <span style="color:#777">Temporary storage - save text temporarily here:</span>
         <br>
         <textarea id="temporaryStorage" class="convenientWidth" style="height:150px; font-family: times, serif;" ondblclick="selectWithoutTail(document.getElementById('temporaryStorage'))"></textarea>
@@ -154,11 +158,13 @@
 
         $("#txtInfo").resizable({
             resize: setSrchResultsWidth
+            //alsoResize: "#oald, hr"
         });
 
         function setSrchResultsWidth() {
              var w = $("#txtInfo").width();
              $("#oald").width(w);
+             $("hr").width(w);
         }
 
         setSrchResultsWidth();
@@ -200,11 +206,11 @@
             if (!document.getElementById('processChangesChk').checked) {
                 return;
             }
-            
+          
             var text = document.getElementById("txtInfo").value;
 
             if(text == '') {
-                document.getElementById("oald").innerHTML = '';
+                document.getElementById("oald").innerHTML = '...';
                 return;
             }
 
@@ -223,16 +229,24 @@
                 var audioSeparatorPos = rows[r].indexOf(oaldSeparator, examplesSeparatorPos + 1);
 
                 if(examplesSeparatorPos > -1) {
-                    text += "<p class='convenientFont'>" + rows[r].substring(0, examplesSeparatorPos) + '<br>';
-                    text += "<ul> <li class='convenientFont'>" + rows[r].substring(examplesSeparatorPos + oaldSeparator.length, audioSeparatorPos).replace(replaceToLiRe, "<li class='convenientFont'>") + "</ul>";
-                    text += "<ul> <li class='convenientFont split'>" + rows[r].substring(audioSeparatorPos + oaldSeparator.length) + "</ul>";
+                    text += "<p class='convenientFont' style='margin: 0;'>" + rows[r].substring(0, examplesSeparatorPos) + "</p>";
+                    text += "<ul style='margin: 0;'> <li class='convenientFont' style='margin: 0;'>" + rows[r].substring(examplesSeparatorPos + oaldSeparator.length, audioSeparatorPos).replace(replaceToLiRe, "<li class='convenientFont' style='margin: 0;'>") + "</ul>";
+                    text += "<ul style='margin: 0;'> <li class='convenientFont split' style='margin: 0;'>" + rows[r].substring(audioSeparatorPos + oaldSeparator.length) + "</ul>";
                 }
                 else {
-                    text += "<p>" + "<ul> <li class='convenientFont'>" + rows[r].replace(replaceToLiRe, "<li>") + "</ul>";
+                    text += "<p class='convenientFont' style='margin: 0;'>" + "<ul style='margin: 0;'> <li class='convenientFont' style='margin: 0;'>" + rows[r].replace(replaceToLiRe, "<li>") + "</ul></p>";
                 }
-                text += '<hr></p>';
+                text += "<hr style='margin: 0;'>";
             }
-            text = text.substring(0, text.length - 8);
+            //text = text.substring(0, text.length - 8);
+            var strangeStr = '<p><\\p>';
+            var pos = text.indexOf(strangeStr);
+            if (pos >= 0) {
+                console.log('** contains <p><\\p>')
+            }
+            else {
+                console.log('** does not contain <p><\\p>')
+            }
             document.getElementById("oald").innerHTML = text;
         }
 
@@ -271,7 +285,7 @@
                     var length = txtInfo.value.length;
                     txtInfo.value = txtInfo.value.replace(replaceTwoNewLinesRe, '\n');
                 } while (txtInfo.value.length != length);
-           
+         
                 document.getElementById('txtInfo').value = document.getElementById('txtInfo').value.replace(replaceNewLineRe, " ");
                 processOald();
 
@@ -366,7 +380,7 @@
             }
             txtInfoComponent.select();
         }
-       
+     
         function saveTextAsFile() {
             var textToWrite = document.getElementById("temporaryStorage").value;
             var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
@@ -391,37 +405,37 @@
 
             downloadLink.click();
         }
-       
+     
         function destroyClickedElement(event) {
             document.body.removeChild(event.target);
         }
-        
+      
         function entryTemplate() {
             var template = "**word** – **part-of-speech** – **transcription** – **comments** – **translation** – **examples** – **audio-files-urls**";
-            
-            document.getElementById('txtInfo').value = 
+          
+            document.getElementById('txtInfo').value =
                 document.getElementById('txtInfo').value != '' ?
                     template + '\n' + document.getElementById('txtInfo').value :
                     template;
-                    
+                  
             processOald();
         }
-        
+      
         function removePlaceholders() {
             var placeholdersRE = /\*\*word\*\*|\*\*part-of-speech\*\*|\*\*transcription\*\*|\*\*comments\*\*|\*\*translation\*\*|\*\*examples\*\*|\*\*audio-files-urls\*\*/g;
             var result = document.getElementById('txtInfo').value.replace(placeholdersRE, '');
             document.getElementById('txtInfo').value = result;
-           
+         
             processOald();
         }
-        
+      
         function switchProcessState() {
             document.getElementById('processChangesBtn').disabled = !document.getElementById('processChangesBtn').disabled;
         }
 
         function processChangesManually() {
             var checkedState = document.getElementById('processChangesChk').checked;
-           
+          
             document.getElementById('processChangesChk').checked = true;
             processOald();
             document.getElementById('processChangesChk').checked = checkedState;

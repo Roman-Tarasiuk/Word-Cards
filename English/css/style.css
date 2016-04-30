@@ -99,6 +99,7 @@ a {
 
 span {
     vertical-align: middle;
+    font-size: 16pt;
 }
 
 .bre {
@@ -109,6 +110,16 @@ span {
 .name {
     color: #8f0610;
     visibility: hidden;
+}
+
+.breLight {
+    color: #d0dffb;
+    font-family: serif;
+}
+
+.nameLight {
+    color: #fdced1;
+    font-family: serif;
 }
 
 img {
@@ -137,7 +148,7 @@ img {
 
 #transcription {
     font-size: 16pt;
-    color: #757575;
+    color: #555;
 }
 
 #translation {
@@ -159,6 +170,11 @@ hr {
     margin-top: 20px;
     font-size: 16pt;
     font-family: sans-serif;
+}
+
+#progress {
+    color: #ccc;
+    margin-top: 10px;
 }
 
 /**/
