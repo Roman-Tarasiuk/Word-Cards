@@ -103,13 +103,15 @@ span {
 }
 
 .bre {
-    color: #07255e;
+    /*color: #07255e;*/
+    color: #a0bff8;
     font-family: serif;
     visibility: hidden;
 }
 
 .name {
-    color: #8f0610;
+    /*color: #8f0610;*/
+    color: #fb9da3;
     font-family: serif;
     visibility: hidden;
 }
