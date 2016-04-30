@@ -104,21 +104,23 @@ span {
 
 .bre {
     color: #07255e;
+    font-family: serif;
     visibility: hidden;
 }
 
 .name {
     color: #8f0610;
+    font-family: serif;
     visibility: hidden;
 }
 
 .breLight {
-    color: #d0dffb;
+    color: #a0bff8;
     font-family: serif;
 }
 
 .nameLight {
-    color: #fdced1;
+    color: #fb9da3;
     font-family: serif;
 }
 
@@ -172,9 +174,12 @@ hr {
     font-family: sans-serif;
 }
 
+.progress {
+    margin-top: 20px;
+}
+
 #progress {
     color: #ccc;
-    margin-top: 10px;
 }
 
 /**/
