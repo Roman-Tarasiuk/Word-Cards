@@ -47,7 +47,16 @@
                 <input type=file accept='text/plain' onchange='openFile(event)' style='padding: 10px;'>
                 <input type=button value='Clear vocabulary' onclick='document.getElementById("vocabulary").value=""' style='padding: 10px;'>
             </p>
-            <textarea id="vocabulary" style='margin-top: 5px;'></textarea>
+            <textarea id="vocabulary" style='margin-top: 5px;' onchange='entriesCount()'></textarea>
+            <br>
+            <p>
+                Words loaded: <span id='entriesTotal' style='vertical-align: middle;'>...</span>
+                Words to learn:
+                    <input type=radio name="learnRange" value="all" checked> All
+                    <input type=radio name="learnRange" value="range"> Range
+                        from <input type=text id='learnFrom' style='width: 80px;'>
+                        to <input type=text id='learnTo' style='width: 80px;'>
+            </p>
             <br>
             Text scale (0.1 – 5.0):
             <input type=text id='scale' value='1'>
@@ -65,7 +74,7 @@
         var entries,
             current = 0,
             splitterStr = " – ",
-            words = [],
+            wordsIndex = [],
             wordsHistory = [],
             audios = null,
             functions = null;
@@ -92,10 +101,7 @@
         }
 
         function moveRight() {
-            current++;
-            if (current == entries.length) {
-                current = 0;
-            }
+            incrementCurrent();
 
             wordsHistory = [];
 
@@ -105,11 +111,26 @@
             showCurrent();
         }
 
-        function moveLeft() {
-            current--;
-            if (current == -1) {
-                current = entries.length - 1;
+        function incrementCurrent() {
+            var r = document.getElementsByName('learnRange');
+
+            current++;
+            if (r[0].checked) { // all
+                if (current == entries.length) {
+                    current = 0;
+                }
             }
+            else { // range
+                var learnFrom = document.getElementById('learnFrom').value;
+                var learnTo = document.getElementById('learnTo').value;
+                if ((current + 1) > learnTo) {
+                    current = learnFrom - 1;
+                }
+            }
+        }
+
+        function moveLeft() {
+            decrementCurrent()
 
             wordsHistory = [];
 
@@ -117,11 +138,49 @@
             audios = null;
 
             showCurrent();
+        }
+
+        function decrementCurrent() {
+            var r = document.getElementsByName('learnRange');
+
+            current--;
+            if (r[0].checked) { // all
+                if (current == -1) {
+                    current = entries.length - 1;
+                }
+            }
+            else { // range
+                var learnFrom = document.getElementById('learnFrom').value;
+                var learnTo = document.getElementById('learnTo').value;
+                if ((current + 1) < learnFrom) {
+                    current = learnTo - 1;
+                }
+            }
+        }
+
+        function checkRange() {
+            var r = document.getElementsByName('learnRange');
+
+            if (r[0].checked) { // all
+                return;
+            }
+            else { // range
+                var learnFrom = document.getElementById('learnFrom').value;
+                var learnTo = document.getElementById('learnTo').value;
+                if ((current + 1) < learnFrom) {
+                    current = learnTo - 1;
+                }
+                else if ((current + 1) > learnTo) {
+                    if (current != (entries.length - 1)) {
+                        current = learnFrom - 1;
+                    }
+                }
+            }
         }
 
         function goToWord() {
             var word = document.getElementById('goToWord').value.toLowerCase();
-            var index = words.indexOf(word);
+            var index = wordsIndex.indexOf(word);
             if (index < 0) {
                 console.log('<0');
                 return;
@@ -155,6 +214,18 @@
             $('#wordCard').toggle();
             $("#goTo").toggle();
 
+            entriesCount();
+
+            current = 0;
+            checkRange();
+
+            functions = null;
+            audios = null;
+
+            showCurrent();
+        };
+
+        function entriesCount() {
             var text = $("#vocabulary").val();
 
             var emptyEntriesExist = false;
@@ -175,20 +246,15 @@
             if (!emptyEntriesExist) {
                 entries = tmp;
             }
-            
-            words = [];
+
+            wordsIndex = [];
             wordsHistory = [];
             for (var i = 0; i < entries.length; i++) {
-                words[i] = entries[i].substring(0, entries[i].indexOf(splitterStr));
+                wordsIndex[i] = entries[i].substring(0, entries[i].indexOf(splitterStr));
             }
 
-            current = 0;
-
-            functions = null;
-            audios = null;
-
-            showCurrent();
-        };
+            document.getElementById('entriesTotal').innerHTML = entries.length;
+        }
 
         function showCurrent() {
             if (entries[current] == "") {
@@ -365,6 +431,7 @@
             var reader = new FileReader();
             reader.onload = function(){
                 document.getElementById('vocabulary').value = reader.result;
+                entriesCount();
             };
 
             reader.readAsText(input.files[0]);
