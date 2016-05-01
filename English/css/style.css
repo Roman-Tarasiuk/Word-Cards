@@ -69,7 +69,7 @@ input[type=radio] {
     vertical-align: middle;
 }
 
-input[type=text] {
+input {
     padding: 10px;
 }
 
@@ -133,8 +133,9 @@ img {
 }
 
 #pos {
-    color: #757575;
+    color: #888;
     margin-top: 12px;
+    margin-bottom: 8px;
     font-family: sans-serif;
 }
 
@@ -146,13 +147,13 @@ img {
 
 #transcription, #translation {
     margin-top: 5px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     font-family: sans-serif;
 }
 
 #transcription {
     font-size: 16pt;
-    color: #555;
+    color: #444;
 }
 
 #translation {
@@ -161,7 +162,7 @@ img {
 }
 
 #comment {
-    /*margin-top: 5px;*/
+    margin-bottom: 10px;
     font-family: sans-serif;
 }
 

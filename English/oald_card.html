@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Oald card</title>
     <link rel="shortcut icon" href="img/icon.png">
-    
+
     <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 
@@ -14,23 +14,25 @@
     <div id="moveLeft" class="navigate" onclick="moveLeft()"></div>
 
     <div id="info" class="info">
-        <div id="settingsButton" onclick="$('#settings').toggle(); $('#wordCard').toggle();"></div>
+        <div id="settingsButton" onclick="toggleSettings()"></div>
 
         <div id="wordCard" style="display: none;">
             <p id="word"></p>
             <p id="pos"></p>
-            <div id="audioLinks"></div>
             <p id="transcription"></p>
+            <div id="audioLinks"></div>
             <p id="comment"></p>
             <p id="translation"></p>
             <hr>
             <p id="examples"></p>
-            <p class="progress"><span id="progress">.../...</span></p>
-            <!-- <p>
-                Go to word:
-                <input type=text id='goToWord'>
-                <input type=button onclick='goToWord()'>
-            </p> -->
+            <p class="progress" onclick='$("#goTo").toggle()'><span id="progress">.../...</span>
+                <p id='goTo'>
+                    <span>Go to word:</span>
+                    <input type=text id='goToWord'>
+                    <input type=button value='Go to' onclick='goToWord()'>
+                    <input type=button value='Back' onclick='goBack()'>
+                </p>
+            </p>
         </div>
 
         <div id="settings">
@@ -47,7 +49,7 @@
             </p>
             <textarea id="vocabulary" style='margin-top: 5px;'></textarea>
             <br>
-            Text scale (0 – 5):
+            Text scale (0.1 – 5.0):
             <input type=text id='scale' value='1'>
             <input type=button value="Apply" onclick="init()" style='padding: 10px; margin-top: 5px;'></input>
         </div>
@@ -60,17 +62,22 @@
     <script src="js/jquery.min.js"></script>
 
     <script>
-        //
-        // To do: shuffle entries
-        //        go to some word (with index array)
-        //
-        
-        init();
-
         var entries,
             current = 0,
+            splitterStr = " – ",
+            words = [],
+            wordsHistory = [],
             audios = null,
             functions = null;
+
+        init();
+
+        function toggleSettings() {
+            $('#settings').toggle();
+            $('#wordCard').toggle();
+            $("#goTo").toggle();
+            applyFontSizes();
+        }
 
         function play(index) {
             autoplayOff();
@@ -90,6 +97,8 @@
                 current = 0;
             }
 
+            wordsHistory = [];
+
             autoplayOff();
             audios = null;
 
@@ -102,6 +111,39 @@
                 current = entries.length - 1;
             }
 
+            wordsHistory = [];
+
+            autoplayOff();
+            audios = null;
+
+            showCurrent();
+        }
+
+        function goToWord() {
+            var word = document.getElementById('goToWord').value.toLowerCase();
+            var index = words.indexOf(word);
+            if (index < 0) {
+                console.log('<0');
+                return;
+            }
+
+            wordsHistory[wordsHistory.length] = current;
+
+            current = index;
+
+            autoplayOff();
+            audios = null;
+
+            showCurrent();
+        }
+
+        function goBack() {
+            if (wordsHistory.length == 0) {
+                return;
+            }
+
+            current = wordsHistory.pop();
+
             autoplayOff();
             audios = null;
 
@@ -111,7 +153,8 @@
         function init() {
             $('#settings').toggle();
             $('#wordCard').toggle();
-        
+            $("#goTo").toggle();
+
             var text = $("#vocabulary").val();
 
             var emptyEntriesExist = false;
@@ -128,17 +171,22 @@
                     break;
                 }
             }
-            
+
             if (!emptyEntriesExist) {
                 entries = tmp;
             }
             
-            //current = Math.floor(entries.length / 2);
+            words = [];
+            wordsHistory = [];
+            for (var i = 0; i < entries.length; i++) {
+                words[i] = entries[i].substring(0, entries[i].indexOf(splitterStr));
+            }
+
             current = 0;
 
             functions = null;
             audios = null;
-                
+
             showCurrent();
         };
 
@@ -148,7 +196,7 @@
             }
 
             var currentEntry = entries[current];
-            var parts = currentEntry.split(" – ");
+            var parts = currentEntry.split(splitterStr);
 
             $("#word").html(parts[0]);
             $("#pos").html(parts[1]);
@@ -163,14 +211,14 @@
 
             $("#translation").html(parts[4]);
             $("#examples").html(parts[5]);
-            
+
             document.title = parts[0] + " - Oald card";
-            
+
             document.getElementById('progress').innerHTML = (current + 1) + '\/' + entries.length;
 
             applyFontSizes();
         }
-        
+
         function styleTranscription(transcription) {
             var mapObj = {
                 BrE:"<span class='breLight'>BrE</span>",
@@ -192,7 +240,7 @@
             }
 
             audios = [];
-            
+
             var bre = "BrE";
             var name = "NAmE";
 
@@ -205,7 +253,7 @@
 
             var path = $("#audioPath").val();
             var isMp3 = document.getElementById("Mp3").checked;
-            
+
             var currentIndex;
 
             for (var i = 0; i < parts.length; i++) {
@@ -252,7 +300,7 @@
 
         function initAutoplay() {
             console.log('initAutoplay()...');
-            
+
             if (typeof audios == 'undefined' || audios == null) {
                 console.log("Exit initAutoplay(). (01)");
                 return;
@@ -308,7 +356,7 @@
             }
             functions = null;
         }
-        
+
         // http://stackoverflow.com/questions/14446447/javascript-read-local-text-file
         //
         function openFile(event) {
@@ -318,10 +366,10 @@
             reader.onload = function(){
                 document.getElementById('vocabulary').value = reader.result;
             };
-            
+
             reader.readAsText(input.files[0]);
         };
-        
+
         function applyFontSizes() {
             function scaleFont(element, defaultSize, scale) {
                 try {
@@ -331,7 +379,7 @@
                     console.log('**applyFontSizes() exception...');
                 }
             }
-            
+
             var scale;
             try {
                 scale = document.getElementById('scale').value;
@@ -341,23 +389,23 @@
             catch (exception) {
                 scale = 1;
             }
-            
-            if (scale <= 0) {
+
+            if (scale < 0.1) {
                 scale = 1;
             }
             else if (scale > 5) {
                 scale = 5;
             }
-            
+
             document.getElementById('scale').value = scale;
-            
+
             scaleFont(document.getElementById('word'), 24, scale);
             scaleFont(document.getElementById('pos'), 16, scale);
             scaleFont(document.getElementById('transcription'), 16, scale);
             scaleFont(document.getElementById('comment'), 16, scale);
             scaleFont(document.getElementById('translation'), 20, scale);
             scaleFont(document.getElementById('examples'), 16, scale);
-            
+
             var spans = document.getElementsByTagName('span');
             for (var i = 0; i < spans.length; i++) {
                 scaleFont(spans[i], 16, scale);
