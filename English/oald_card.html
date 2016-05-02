@@ -29,6 +29,7 @@
                 <p id='goTo'>
                     <span>Go to word:</span>
                     <input type=text id='goToWord'>
+                    <img src='img/delete48.png' onclick='document.getElementById("goToWord").value=""' />
                     <input type=button value='Go to' onclick='goToWord()'>
                     <input type=button value='Back' onclick='goBack()'>
                 </p>
@@ -280,7 +281,15 @@
 
             document.title = parts[0] + " - Oald card";
 
-            document.getElementById('progress').innerHTML = (current + 1) + '\/' + entries.length;
+            var rangeStr = '';
+            var r = document.getElementsByName('learnRange');
+            if (!r[0].checked) { // range
+                var learnFrom = document.getElementById('learnFrom').value;
+                var learnTo = document.getElementById('learnTo').value;
+                rangeStr = ' [' + learnFrom + '-' + learnTo + ']';
+            }
+            
+            document.getElementById('progress').innerHTML = (current + 1) + '\/' + entries.length + rangeStr;
 
             applyFontSizes();
         }
