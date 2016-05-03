@@ -281,12 +281,12 @@
 
             document.title = parts[0] + " - Oald card";
 
-            var rangeStr = '';
+            var rangeStr = ', *';
             var r = document.getElementsByName('learnRange');
             if (!r[0].checked) { // range
                 var learnFrom = document.getElementById('learnFrom').value;
                 var learnTo = document.getElementById('learnTo').value;
-                rangeStr = ' [' + learnFrom + '-' + learnTo + ']';
+                rangeStr = ', [' + learnFrom + '-' + learnTo + ']';
             }
             
             document.getElementById('progress').innerHTML = (current + 1) + '\/' + entries.length + rangeStr;
