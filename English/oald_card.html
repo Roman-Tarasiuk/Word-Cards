@@ -53,10 +53,11 @@
             <p>
                 Words loaded: <span id='entriesTotal' style='vertical-align: middle;'>...</span>
                 Words to learn:
-                    <input type=radio name="learnRange" value="all" checked> All
-                    <input type=radio name="learnRange" value="range"> Range
-                        from <input type=text id='learnFrom' style='width: 80px;'>
-                        to <input type=text id='learnTo' style='width: 80px;'>
+                    <input type=radio name="learnRange" value="all" checked /> All
+                    <input type=radio name="learnRange" value="range" /> Range
+                        from <input type=text id='learnFrom' style='width: 80px;' />
+                        to <input type=text id='learnTo' style='width: 80px;' />
+                    <input type=checkbox id='displayRange' /> Display range
             </p>
             <br>
             Text scale (0.1 – 5.0):
@@ -281,12 +282,17 @@
 
             document.title = parts[0] + " - Oald card";
 
-            var rangeStr = ', *';
-            var r = document.getElementsByName('learnRange');
-            if (!r[0].checked) { // range
-                var learnFrom = document.getElementById('learnFrom').value;
-                var learnTo = document.getElementById('learnTo').value;
-                rangeStr = ', [' + learnFrom + '-' + learnTo + ']';
+            var rangeStr = '';
+            if (document.getElementById('displayRange').checked) {
+                var r = document.getElementsByName('learnRange');
+                if (!r[0].checked) { // range
+                    var learnFrom = document.getElementById('learnFrom').value;
+                    var learnTo = document.getElementById('learnTo').value;
+                    rangeStr = ', [' + learnFrom + '-' + learnTo + ']';
+                }
+                else {
+                    rangeStr = ', *';
+                }
             }
             
             document.getElementById('progress').innerHTML = (current + 1) + '\/' + entries.length + rangeStr;
