@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Compare strings</title>
+  
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+  
+    <link rel="stylesheet" href="css/jquery-ui.min.css" type="text/css" media="all">
+  
+    <style>
+        input[type=text] {
+            position: absolute;
+            left: 40px;
+            vertical-align: middle;
+            width: 700px;
+            font-family: courier;
+        }
+      
+        input#result {
+            color: red;
+        }
+      
+        input[type=image] {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <input type=image src="img/clear.png" alt="Clear" onclick='clearTxt("str1"); reset()' title='Clear' />
+        <input type=text id='str1' oninput='reset()' onchange='reset()' />
+    </div>
+    <div>
+        <input type=image src="img/clear.png" alt="Clear" onclick='clearTxt("str2"); reset()' title='Clear' />
+        <input type=text id='str2' oninput='reset()' onchange='reset()' />
+    </div>
+    <div>
+        <input type=image src="img/compare.png" alt="Compare" onclick='compare()' title='Compare' />
+        <input type=text id='result'/>
+        <br>
+        <br>
+        <p id='count' style='margin: 0;'>...</p>
+    </div>
+  
+    <br>
+    Texts' width (pixels):
+    <input type=number id='width' onkeyup="return onInputKeyUp(event)" onchange="setLength(document.getElementById('width'))" value='700'/>
+
+    <script>
+        function reset() {
+            document.getElementById("count").innerHTML = "...";
+        }
+  
+        function clearTxt(id) {
+            var el = document.getElementById(id);
+            if (el !== null) {
+                el.value = '';
+            }
+        }
+      
+        $("#result").resizable({
+            alsoResize: "#str1, #str2",
+            resize: setWidth
+        });
+      
+        function setWidth() {
+            document.getElementById('width').value = parseInt(document.getElementById('result').style.width);
+        }
+      
+        function onInputKeyUp(e) {
+            var numberElem = document.getElementById("width");
+            if(document.activeElement == numberElem) {
+                if(e.keyCode == 38 || e.keyCode == 40) {
+                    setLength(numberElem);
+                }
+            }
+        }
+      
+        function setLength(numberElem) {
+            document.getElementById("result").style.width = numberElem.value + 'px';
+            document.getElementById("str1").style.width = numberElem.value + 'px';
+            document.getElementById("str2").style.width = numberElem.value + 'px';
+          
+            var q = document.getElementsByClassName('ui-wrapper')[0];
+            q.style.width = (parseInt(numberElem.value) + 6) + 'px';
+        }
+      
+        function compare() {
+            //console.log('comparing...');
+          
+            var text1 = document.getElementById('str1');
+            var text2 = document.getElementById('str2');
+            var compareResult = null;
+          
+            if (text1.value.length >= text2.value.length) {
+                compareResult = cmp(text1.value, text2.value);
+            }
+            else {
+                compareResult = cmp(text2.value, text1.value);
+            }
+          
+            document.getElementById('result').value = compareResult.compareStr;
+            document.getElementById('count').innerHTML = 'Differences found: ' + compareResult.placesCount;
+          
+            /* Working version
+            function cmp(txt1, txt2) { // txt1.length >= txt2.length
+                var resultStr = '';
+              
+                for (var i = 0; i < txt1.length; i++) {
+                    if (i < txt2.length && txt2[i] == txt1[i]) {
+                        resultStr += ' ';
+                    }
+                    else {
+                        resultStr += '■';
+                    }
+                }
+              
+                return resultStr;
+            }
+            //*/
+          
+            function cmp(txt1, txt2) { // txt1.length >= txt2.length
+                var resultStr = new Array(txt1.length).fill(' ');
+                var placesCount = 0;
+              
+                for (var i = 0; i < txt1.length; i++) {
+                    if (i >= txt2.length || txt2[i] != txt1[i]) {
+                        resultStr[i] = '■';
+                        if (i == 0 || resultStr[i - 1] == ' ') {
+                            placesCount++;
+                        }
+                    }
+                }
+              
+                return {
+                    compareStr: resultStr.join(''),
+                    placesCount: placesCount
+                };
+            }
+        }
+    </script>
+</body>
+</html>

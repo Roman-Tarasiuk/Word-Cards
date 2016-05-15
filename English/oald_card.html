@@ -27,9 +27,12 @@
             <p id="examples"></p>
             <p class="progress" onclick='$("#goTo").toggle()'><span id="progress">.../...</span>
                 <p id='goTo'>
-                    <span>Go to word:</span>
-                    <input type=text id='goToWord'>
+                    <span>Go to <strong>word:</strong></span>
+                    <input type=text id='goToWord' size='15'>
                     <img src='img/delete48.png' onclick='document.getElementById("goToWord").value=""' />
+                    <span><strong>index:</strong></span>
+                    <input type=text id='goToIndex' size='4'>
+                    <img src='img/delete48.png' onclick='document.getElementById("goToIndex").value=""' />
                     <input type=button value='Go to' onclick='goToWord()'>
                     <input type=button value='Back' onclick='goBack()'>
                 </p>
@@ -184,8 +187,28 @@
             var word = document.getElementById('goToWord').value.toLowerCase();
             var index = wordsIndex.indexOf(word);
             if (index < 0) {
-                console.log('<0');
-                return;
+                if (word == '') {
+                    index = parseInt(document.getElementById('goToIndex').value);
+                    if (!isNaN(index)) {
+                        if (index > entries.length) {
+                            index = entries.length - 1;
+                        }
+                        else if (index < 1) {
+                            index = 0;
+                        }
+                        else {
+                            index--;
+                        }
+                        document.getElementById('goToIndex').value = index + 1;
+                    }
+                    else {
+                        console.log('isNaN');
+                    }
+                }
+                else {
+                    console.log('<0');
+                    return;
+                }
             }
 
             wordsHistory[wordsHistory.length] = current;
@@ -492,6 +515,9 @@
             for (var i = 0; i < spans.length; i++) {
                 scaleFont(spans[i], 16, scale);
             }
+            
+            scaleFont(document.getElementById('goToWord'), 16, scale);
+            scaleFont(document.getElementById('goToIndex'), 16, scale);
         }
     </script>
 </body>
