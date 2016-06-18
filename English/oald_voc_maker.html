@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>OALD Vocabulary Maker</title>
-    <link rel="shortcut icon" href="img/worker-32.png">
+    <link rel="shortcut icon" href="img/voc_maker.png">
 
     <script src="js/jquery.min.js"></script>
     <script src="js/jquery-ui.min.js"></script>
@@ -66,7 +66,8 @@
         <br>
         <textarea id="txtInfo" class="convenientWidth" style="height:150px; font-family: times, serif; font-size: 20px;"></textarea>
         <!-- <br> -->
-        <input type=button value="Pdf clipboard join" onclick="pdfClipboardJoin()">
+        <!-- <input type=button value="Pdf clipboard join" onclick="removeRedundantLineBreaks()"> -->
+        <button onclick="removeRedundantLineBreaks()"><img src='img/Adobe_Reader_v9.0_icon_small.png' style="vertical-align: top" /> Remove redundant line breaks</button>
         <input type=button value="<exmpl>" onclick="surroundWithTag('exmpl')" class="tagButton">
         <input type=button value="<exmpla>" onclick="surroundWithTag('exmpla')" class="tagButton">
         <input type=button value="<phr>" onclick="surroundWithTag('phr')" class="tagButton">
@@ -78,9 +79,9 @@
         <input type=button value="Remove **placeholders**" onclick="removePlaceholders()" style="color:#0298bd; background-color:#c9f0c9">
         <input type=button value="  ↓  " title="Move examples to temporary storage" onclick="appendExample()" style="background-color:#7be1fa">
         <!-- <br> -->
-        <div style='position: relative; left: 128px; margin: 0;'>
-            <input type=checkbox id='processChangesChk' onclick='switchProcessState()'> Process changes automatically
-            <input type=button id='processChangesBtn' value='Process changes'  onclick='processChangesManually()'>
+        <div style='position: relative; left: 218px; margin: 0; width: calc(100% - 218px)'>
+            <input type=checkbox id='processChangesChk' onclick='switchProcessState()' checked> Process changes automatically
+            <input type=button id='processChangesBtn' value='Process changes'  onclick='processChangesManually()' disabled>
         </div>
     </div>
     <span style="color:#777; margin: 10px 0 0 0;">Preview:</span>
@@ -277,16 +278,24 @@
             }
         }
 
-        function pdfClipboardJoin() {
+        function removeRedundantLineBreaks() {
             var txtInfo = document.getElementById('txtInfo');
             if(replaceNewLineRe.test(txtInfo.value)) {
-                var replaceTwoNewLinesRe = new RegExp("\n\n", "g");
+                var tmpRe = /(\.ogg|\.mp3)(\n)/g;
+                var tmpStr = '>>>>>';
+                txtInfo.value = txtInfo.value.replace(tmpRe, '$1' + tmpStr);
+           
+                var replaceTwoNewLinesRe = new RegExp("\n", "g");
                 do {
                     var length = txtInfo.value.length;
                     txtInfo.value = txtInfo.value.replace(replaceTwoNewLinesRe, '\n');
                 } while (txtInfo.value.length != length);
-         
+               
                 document.getElementById('txtInfo').value = document.getElementById('txtInfo').value.replace(replaceNewLineRe, " ");
+               
+                tmpRe = new RegExp(tmpStr, 'g');
+                txtInfo.value = txtInfo.value.replace(tmpRe, '\n');
+               
                 processOald();
 
                 txtInfo.select();
@@ -303,26 +312,39 @@
         }
 
         function selectWithoutTail(textArea) {
-            while(textArea.value[textArea.selectionEnd - 1] == " "
+            while (textArea.value[textArea.selectionEnd - 1] == " "
                     || textArea.value[textArea.selectionEnd - 1] == "\t") {
                 textArea.selectionEnd--;
             }
-            while(textArea.selectionEnd < textArea.value.length
+            while (textArea.selectionEnd < textArea.value.length
                && textArea.value[textArea.selectionEnd] != " "
                && textArea.value[textArea.selectionEnd] != "\t"
                && textArea.value[textArea.selectionEnd] != ","
                && textArea.value[textArea.selectionEnd] != ";"
-               && textArea.value[textArea.selectionEnd] != '"') {
+               && textArea.value[textArea.selectionEnd] != '"'
+               && textArea.value[textArea.selectionEnd] != '—') {
                 textArea.selectionEnd++;
             }
-            while(textArea.selectionStart > 0
+            while (textArea.selectionStart > 0
                && textArea.value[textArea.selectionStart - 1] != "\n"
                && textArea.value[textArea.selectionStart - 1] != " "
                && textArea.value[textArea.selectionStart - 1] != "\t"
                && textArea.value[textArea.selectionStart - 1] != ","
                && textArea.value[textArea.selectionStart - 1] != ";"
-               && textArea.value[textArea.selectionStart - 1] != '"') {
+               && textArea.value[textArea.selectionStart - 1] != '"'
+               && textArea.value[textArea.selectionStart - 1] != '—') {
                 textArea.selectionStart--;
+            }
+           
+            if (textArea.value[textArea.selectionStart] == '(') {
+                while (textArea.value[textArea.selectionEnd - 1] != ')') {
+                    textArea.selectionEnd++;
+                }
+            }
+            else if (textArea.value[textArea.selectionEnd - 1] == ')') {
+                while (textArea.value[textArea.selectionStart] != '(') {
+                    textArea.selectionStart--;
+                }
             }
         }
 
