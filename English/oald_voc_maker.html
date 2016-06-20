@@ -9,53 +9,10 @@
     <script src="js/jquery-ui.min.js"></script>
 
     <link rel="stylesheet" href="css/jquery-ui.min.css" type="text/css" media="all">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
     <style>
-        exmpl {
-            font-weight: bold;
-            color: limegreen;
-        }
-
-        exmpla {
-            color: #39f;
-        }
-
-        oald8 {
-            color: #426c95;
-        }
-
-        phr {
-            text-decoration: underline;
-            -moz-text-decoration-style: dotted;
-            text-decoration-style: dotted;
-            -moz-text-decoration-color: #32CD32;
-            text-decoration-color: #32CD32;
-        }
-
-        .tagButton {
-            color: #bbb;
-            background-color: #444;
-        }
-
-        .convenientWidth {
-            width: 75%;
-        }
-
-        .convenientFont {
-            font-size: 24px;
-        }
-
-        .split {
-            list-style-image: url('img/Devices-media-optical-audio-icon.png');
-        }
-
-        ::-moz-selection {
-            color: black;
-            background: #9bf;
-        }
-
-        ::selection {
-            color: black;
-            background: #9bf;
+        body {
+            margin: 5px;
         }
     </style>
 </head>
@@ -67,7 +24,7 @@
         <textarea id="txtInfo" class="convenientWidth" style="height:150px; font-family: times, serif; font-size: 20px;"></textarea>
         <!-- <br> -->
         <!-- <input type=button value="Pdf clipboard join" onclick="removeRedundantLineBreaks()"> -->
-        <button onclick="removeRedundantLineBreaks()"><img src='img/Adobe_Reader_v9.0_icon_small.png' style="vertical-align: top" /> Remove redundant line breaks</button>
+        <button onclick="removeRedundantLineBreaks()"><img src='img/Adobe_Reader_v9.0_icon_small.png' /> Remove redundant line breaks</button>
         <input type=button value="<exmpl>" onclick="surroundWithTag('exmpl')" class="tagButton">
         <input type=button value="<exmpla>" onclick="surroundWithTag('exmpla')" class="tagButton">
         <input type=button value="<phr>" onclick="surroundWithTag('phr')" class="tagButton">

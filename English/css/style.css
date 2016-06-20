@@ -16,7 +16,7 @@ html, body {
 }
 
 #moveLeft {
-    background: url(../img/navigate_left_48.png) no-repeat center center;
+    background: url(img/navigate_left_48.png) no-repeat center center;
     /*background-color: #f2f2f2;*/
     background-color: #e6ffe6;
 }
@@ -24,7 +24,7 @@ html, body {
 #moveRight {
     margin-left: -20px;
     left: calc(100% - 30px);
-    background: url(../img/navigate_right_48.png) no-repeat center center;
+    background: url(img/navigate_right_48.png) no-repeat center center;
     /*background-color: #f2f2f2;*/
     background-color: #e6ffe6;
 }
@@ -48,7 +48,7 @@ html, body {
     width: 50px;
     height: 50px;
     background-color: green;
-    background: url(../img/settings.png) no-repeat center center;
+    background: url(img/settings.png) no-repeat center center;
     float: left;
 }
 
@@ -73,6 +73,11 @@ input[type=radio] {
 
 input {
     padding: 10px;
+}
+
+button {
+    padding: 6px;
+    vertical-align: top;
 }
 
 #wordCard {
@@ -210,10 +215,43 @@ oald8 {
     color: #426c95;
 }
 
-phr {
+/* phr {
     text-decoration: underline;
     -moz-text-decoration-style: dotted;
          text-decoration-style: dotted;
     -moz-text-decoration-color: #32CD32;
          text-decoration-color: #32CD32;
+} */
+
+phr {
+    border-bottom: 2px dotted #32CD32;
+}
+
+/**/
+
+.tagButton {
+    color: #bbb;
+    background-color: #444;
+}
+
+.convenientWidth {
+    width: 90%;
+}
+
+.convenientFont {
+    font-size: 24px;
+}
+
+.split {
+    list-style-image: url('../img/Devices-media-optical-audio-icon.png');
+}
+
+::-moz-selection {
+    color: black;
+    background: #9bf;
+}
+
+::selection {
+    color: black;
+    background: #9bf;
 }
