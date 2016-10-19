@@ -4,4 +4,4 @@
 
 Деталі по користуванню - у розділі Wiki
 
-Пароль на демонстраційний архів - EnglishTRM
+Демонстраційний архів - https://github.com/Roman-Tarasiuk/OALD-Card-DemoArch
