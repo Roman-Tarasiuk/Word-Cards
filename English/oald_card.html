@@ -25,14 +25,15 @@
             <p id="translation"></p>
             <hr>
             <p id="examples"></p>
-            <p class="progress" onclick='$("#goTo").toggle()'><span id="progress">.../...</span>
+            <p class="progress" onclick='$("#goTo").toggle()'>
+                <span id="progress">.../...</span>
                 <p id='goTo'>
                     <span>Go to <strong>word:</strong></span>
                     <input type=text id='goToWord' size='15'>
-                    <img src='img/delete48.png' onclick='document.getElementById("goToWord").value=""' />
+                    <img src='img/delete48.png' onclick='clearAndFocus("goToWord", true)' />
                     <span><strong>index:</strong></span>
                     <input type=text id='goToIndex' size='4'>
-                    <img src='img/delete48.png' onclick='document.getElementById("goToIndex").value=""' />
+                    <img src='img/delete48.png' onclick='clearAndFocus("goToIndex", true)' />
                     <input type=button value='Go to' onclick='goToWord()'>
                     <input type=button value='Back' onclick='goBack()'>
                 </p>
@@ -76,6 +77,14 @@
     <script src="js/jquery.min.js"></script>
 
     <script>
+        function clearAndFocus(id, focus) {
+            var inputCtrl = document.getElementById(id);
+           
+            inputCtrl.value="";
+            if (focus) {
+                inputCtrl.focus();
+            }
+        }
         var entries,
             current = 0,
             splitterStr = " – ",
@@ -298,7 +307,8 @@
             }
 
             $("#transcription").html(styleTranscription(parts[2]));
-            $("#comment").html(parts[3] != "" ? parts[3] : "-");
+            //$("#comment").html(parts[3] != "" ? parts[3] : "...");
+            $("#comment").html(parts[3]);
 
             $("#translation").html(parts[4]);
             $("#examples").html(parts[5]);

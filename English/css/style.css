@@ -16,7 +16,7 @@ html, body {
 }
 
 #moveLeft {
-    background: url(img/navigate_left_48.png) no-repeat center center;
+    background: url(../img/navigate_left_48.png) no-repeat center center;
     /*background-color: #f2f2f2;*/
     background-color: #e6ffe6;
 }
@@ -24,7 +24,7 @@ html, body {
 #moveRight {
     margin-left: -20px;
     left: calc(100% - 30px);
-    background: url(img/navigate_right_48.png) no-repeat center center;
+    background: url(../img/navigate_right_48.png) no-repeat center center;
     /*background-color: #f2f2f2;*/
     background-color: #e6ffe6;
 }
@@ -48,7 +48,7 @@ html, body {
     width: 50px;
     height: 50px;
     background-color: green;
-    background: url(img/settings.png) no-repeat center center;
+    background: url(../img/settings.png) no-repeat center center;
     float: left;
 }
 
@@ -134,16 +134,17 @@ span {
 }
 
 img {
-    margin-top: 5px;
-    margin-bottom: 5px;
+    margin-top: 2px;
+    margin-bottom: 2px;
     vertical-align: middle;
 }
 
 #pos {
     color: #888;
-    margin-top: 12px;
+    margin-top: 5px;
     margin-bottom: 8px;
     font-family: sans-serif;
+    padding-left: 64px;
 }
 
 #playAll {
@@ -152,25 +153,31 @@ img {
     visibility: hidden;
 }
 
-#transcription, #translation {
-    margin-top: 5px;
-    margin-bottom: 10px;
-    font-family: sans-serif;
+#audioLinks {
+	padding-left: 64px;
 }
 
 #transcription {
+	margin-top: 5px;
     font-size: 16pt;
     color: #444;
+    padding-left: 64px;
+    font-family: sans-serif;
 }
 
 #translation {
+	margin-top: 5px;
     font-size: 20pt;
-    color: #000;
+    color: #444;
+    margin-bottom: 12px;
+    font-family: sans-serif;
 }
 
 #comment {
     margin-bottom: 10px;
     font-family: sans-serif;
+    font-style: italic;
+    color: #777;
 }
 
 hr {
@@ -179,17 +186,19 @@ hr {
 
 #examples {
     color: #077;
-    margin-top: 20px;
+    margin-top: 8px;
     font-size: 16pt;
     font-family: sans-serif;
 }
 
 .progress {
     margin-top: 20px;
+    text-align: right;
 }
 
 #progress {
     color: #ccc;
+    text-decoration: underline;
 }
 
 #goToWord {

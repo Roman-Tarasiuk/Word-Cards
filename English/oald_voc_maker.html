@@ -31,12 +31,20 @@
         <input type=button value="<i>" onclick="surroundWithTag('i')" class="tagButton" style="font-style: italic; color: #fff">
         <input type=button value="<b>" onclick="surroundWithTag('b')" class="tagButton" style="font-weight: bold; color: #fff">
         <input type=button value="<code>" onclick="surroundWithTag('code')" class="tagButton">
+            &nbsp;
+            <input type=button value="Pick" onclick="pick()">
+            &nbsp;
+            <input type=button value="|•• <" onclick="selLeftToLeft()">
+            <input type=button value="|•• >" onclick="selLeftToRight()">
+            <input type=button value="< ••|" onclick="selRightToLeft()">
+            <input type=button value="> ••|" onclick="selRightToRight()">
         <input type=button value="Show entry template" onclick="entryTemplate()">
         <input type=button value="Remove <tags>" onclick="removeAllTags()" style="color:#0298bd; background-color:#c9f0c9">
         <input type=button value="Remove **placeholders**" onclick="removePlaceholders()" style="color:#0298bd; background-color:#c9f0c9">
         <input type=button value="  ↓  " title="Move examples to temporary storage" onclick="appendExample()" style="background-color:#7be1fa">
         <!-- <br> -->
         <div style='position: relative; left: 218px; margin: 0; width: calc(100% - 218px)'>
+            &nbsp;
             <input type=checkbox id='processChangesChk' onclick='switchProcessState()' checked> Process changes automatically
             <input type=button id='processChangesBtn' value='Process changes'  onclick='processChangesManually()' disabled>
         </div>
@@ -55,6 +63,30 @@
     <!-- End of body elements -->
 
     <script>
+        function selLeftToLeft() {
+            var txtCtrl = document.getElementById('txtInfo');
+            txtCtrl.selectionStart--;
+            txtCtrl.focus();
+        }
+        
+        function selLeftToRight() {
+            var txtCtrl = document.getElementById('txtInfo');
+            txtCtrl.selectionStart++;
+            txtCtrl.focus();
+        }
+        
+        function selRightToLeft() {
+            var txtCtrl = document.getElementById('txtInfo');
+            txtCtrl.selectionEnd--;
+            txtCtrl.focus();
+        }
+        
+        function selRightToRight() {
+            var txtCtrl = document.getElementById('txtInfo');
+            txtCtrl.selectionEnd++;
+            txtCtrl.focus();
+        }
+        
         function tripleClick(elementName, f1, f2, f3) {
             var timeout1;
             var timeout2;
@@ -236,36 +268,35 @@
         }
 
         function removeRedundantLineBreaks() {
-            var txtInfo = document.getElementById('txtInfo');
-            if(replaceNewLineRe.test(txtInfo.value)) {
+            var txtInfoCtrl = document.getElementById('txtInfo');
+            if(replaceNewLineRe.test(txtInfoCtrl.value)) {
                 var tmpRe = /(\.ogg|\.mp3)(\n)/g;
                 var tmpStr = '>>>>>';
-                txtInfo.value = txtInfo.value.replace(tmpRe, '$1' + tmpStr);
+                txtInfoCtrl.value = txtInfoCtrl.value.replace(tmpRe, '$1' + tmpStr);
            
                 var replaceTwoNewLinesRe = new RegExp("\n", "g");
                 do {
-                    var length = txtInfo.value.length;
-                    txtInfo.value = txtInfo.value.replace(replaceTwoNewLinesRe, '\n');
-                } while (txtInfo.value.length != length);
+                    var length = txtInfoCtrl.value.length;
+                    txtInfoCtrl.value = txtInfoCtrl.value.replace(replaceTwoNewLinesRe, '\n');
+                } while (txtInfoCtrl.value.length != length);
                
-                document.getElementById('txtInfo').value = document.getElementById('txtInfo').value.replace(replaceNewLineRe, " ");
+                txtInfoCtrl.value = txtInfoCtrl.value.replace(replaceNewLineRe, " ");
                
                 tmpRe = new RegExp(tmpStr, 'g');
-                txtInfo.value = txtInfo.value.replace(tmpRe, '\n');
+                txtInfoCtrl.value = txtInfoCtrl.value.replace(tmpRe, '\n');
                
                 processOald();
-
-                txtInfo.select();
-                txtInfo.selectionStart = 0;
-                txtInfo.selectionEnd = txtInfo.textLength;
             }
+            txtInfoCtrl.select();
         }
 
         function removeAllTags() {
-            if(replaceAllTagsRe.test(document.getElementById('txtInfo').value)) {
-                document.getElementById('txtInfo').value = document.getElementById('txtInfo').value.replace(replaceAllTagsRe, "");
+            var txtInfoCtrl = document.getElementById('txtInfo');
+            if(replaceAllTagsRe.test(txtInfoCtrl.value)) {
+                txtInfoCtrl.value = txtInfoCtrl.value.replace(replaceAllTagsRe, "");
                 processOald();
             }
+            txtInfoCtrl.select();
         }
 
         function selectWithoutTail(textArea) {
@@ -341,23 +372,23 @@
         }
 
         function appendExample() {
-            var txtInfoComponent = document.getElementById("txtInfo");
+            var txtInfoCtrl = document.getElementById("txtInfo");
 
-            if(txtInfoComponent.value != '') {
+            if(txtInfoCtrl.value != '') {
                 if(document.getElementById("temporaryStorage").value == '') {
                     document.getElementById("temporaryStorage").value = document.getElementById("txtInfo").value;
                 }
                 else {
                     document.getElementById("temporaryStorage").value += '\n' + document.getElementById("txtInfo").value;
                 }
-                txtInfoComponent.value = '';
+                txtInfoCtrl.value = '';
                 //processOald();
                 processChangesManually();
 
                 var temporaryStorageComponent = document.getElementById("temporaryStorage");
                 temporaryStorageComponent.scrollTop = temporaryStorageComponent.scrollHeight;
             }
-            txtInfoComponent.select();
+            txtInfoCtrl.select();
         }
      
         function saveTextAsFile() {
@@ -401,11 +432,13 @@
         }
       
         function removePlaceholders() {
+            var txtInfoCtrl = document.getElementById('txtInfo');
             var placeholdersRE = /\*\*word\*\*|\*\*part-of-speech\*\*|\*\*transcription\*\*|\*\*comments\*\*|\*\*translation\*\*|\*\*examples\*\*|\*\*audio-files-urls\*\*/g;
-            var result = document.getElementById('txtInfo').value.replace(placeholdersRE, '');
-            document.getElementById('txtInfo').value = result;
+            var result = txtInfoCtrl.value.replace(placeholdersRE, '');
+            txtInfoCtrl.value = result;
          
             processOald();
+            txtInfoCtrl.select();
         }
       
         function switchProcessState() {
@@ -418,6 +451,12 @@
             document.getElementById('processChangesChk').checked = true;
             processOald();
             document.getElementById('processChangesChk').checked = checkedState;
+        }
+        
+        function pick() {
+            var textComponent = document.getElementById('txtInfo');
+            textComponent.focus();
+            var sel = selectWithoutTail(document.getElementById('txtInfo'));
         }
     </script>
 </body>
