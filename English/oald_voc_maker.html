@@ -25,6 +25,8 @@
         <!-- <br> -->
         <!-- <input type=button value="Pdf clipboard join" onclick="removeRedundantLineBreaks()"> -->
         <button onclick="removeRedundantLineBreaks()"><img src='img/Adobe_Reader_v9.0_icon_small.png' /> Remove redundant line breaks</button>
+        &nbsp;
+        
         <input type=button value="<exmpl>" onclick="surroundWithTag('exmpl')" class="tagButton">
         <input type=button value="<exmpla>" onclick="surroundWithTag('exmpla')" class="tagButton">
         <input type=button value="<phr>" onclick="surroundWithTag('phr')" class="tagButton">
@@ -57,11 +59,11 @@
     <hr style='margin: 0;' class='convenientWidth'>
     <p id="oald" class="convenientWidth convenientFont" style='margin: 0 !important;' ondblclick="selectPWithoutTail()">...</p>
     <div style='margin: 10px 0 0 0;'>
-        <span style="color:#777">Temporary storage - save text temporarily here:</span>
+        <span style="color:#777">Temporary storage:</span>
         <br>
-        <textarea id="temporaryStorage" class="convenientWidth" style="height:150px; font-family: times, serif;" ondblclick="selectWithoutTail(document.getElementById('temporaryStorage'))"></textarea>
+        <textarea id="temporaryStorage" class="convenientWidth" style="height:150px; font-family: times, serif;" ondblclick="selectWithoutTail(document.getElementById('temporaryStorage'))" placeholder="Save text temporarily here."></textarea>
         <br>
-        <input type=button value='Save' onclick='saveTextAsFile()' style='padding: 5px;'>
+        <input type=button value='Save' onclick='saveTextAsFile()' style='padding: 5px;' title="Save temporary data to file.">
     </div>
 
     <!-- End of body elements -->
