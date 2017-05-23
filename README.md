@@ -4,4 +4,4 @@
 
 Деталі по користуванню - у розділі Wiki
 
-Демонстраційний архів - https://github.com/TRM79Temp/OALD-Card-DemoArch
+Демонстраційний архів - https://github.com/TRM79-Temp/OALD-Card-DemoArch
