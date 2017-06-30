@@ -3,7 +3,7 @@
 //
 $(document).ready((function(textInputId) {
 
-    //$("body").css("visibility", "hidden");
+    //$('body').css('visibility', 'hidden');
 
     // *******************************************************
     // *                                                     *
@@ -19,6 +19,8 @@ $(document).ready((function(textInputId) {
     // *******************************************************
 
     try {
+        console.log('* OALD: Init 1 started...');
+
         var div = document.createElement('div');
         div.style.cssText = 'border: 2px solid lime; padding: 5px;';
         var divBody =
@@ -88,9 +90,9 @@ $(document).ready((function(textInputId) {
                         // http://stackoverflow.com/questions/15604140/replace-multiple-strings-with-multiple-other-strings
                         //
                         var mapObj = {
-                            uk_pron:"uk_pron_ogg",
-                            us_pron:"us_pron_ogg",
-                            mp3:"ogg"
+                            uk_pron:'uk_pron_ogg',
+                            us_pron:'us_pron_ogg',
+                            mp3:'ogg'
                         };
                         for (var i = 0; i < result.length; i++) {
                             result[i] = result[i].replace(/uk_pron|us_pron|mp3/gi, function(matched){
@@ -107,7 +109,7 @@ $(document).ready((function(textInputId) {
             // https://ausdemmaschinenraum.wordpress.com/2012/12/06/how-to-save-a-file-from-a-url-with-javascript/
             //
             function saveFile(url) {
-                var filename = url.substring(url.lastIndexOf("/") + 1).split("?")[0];
+                var filename = url.substring(url.lastIndexOf('/') + 1).split('?')[0];
                 var xhr = new XMLHttpRequest();
                 xhr.responseType = 'blob';
                 xhr.onload = function() {
@@ -123,6 +125,8 @@ $(document).ready((function(textInputId) {
                 xhr.send();
             }
         }
+
+        console.log('* OALD: Init 1 complete.');
     }
     catch (exception) {
         console.log('Something wrong in download module');
@@ -131,14 +135,14 @@ $(document).ready((function(textInputId) {
     //
 
     (function() {
-        console.log("Click/Blur: Initialization started...");
+        console.log('* OALD: Init 2 (click/blur) started...');
         var success = true;
 
         var clicks = 0;
 
         try {
             $(textInputId).on('click', function() {
-                //console.log("click..." + clicks);
+                //console.log('click...' + clicks);
                 if (clicks == 0) {
                     this.selectionStart = 0;
                     this.selectionEnd = this.textLength;
@@ -150,7 +154,7 @@ $(document).ready((function(textInputId) {
             });
 
             $(textInputId).on('blur', function() {
-                //console.log("blur...." + clicks);
+                //console.log('blur....' + clicks);
                 clicks = 0;
             });
         }
@@ -159,20 +163,22 @@ $(document).ready((function(textInputId) {
         }
 
         if (success) {
-            console.log("Click/Blur: Initialization finished successfully.");
+            console.log('* OALD: Init 2 (click/blur) finished successfully.');
         }
         else {
-            console.log("Click/Blur: Initialization failed.");
+            console.log('* OALD: Init 2 (click/blur) failed.');
         }
     })();
 
     (function() {
         try {
+            console.log('* OALD: Init 3 started...');
             // http://stackoverflow.com/questions/12897446/greasemonkey-wait-for-page-to-load-before-executing-code-techniques
             //
             window.addEventListener('load', function() {
+                console.log(' ** OALD: onload started...');
 
-                var html = $("html").html();
+                var html = $('html').html();
 
                 var info = process(html);
 
@@ -186,12 +192,14 @@ $(document).ready((function(textInputId) {
                     }
                 }
                 else {
-                    console.log("Word content not found.");
+                    console.log('Word content not found.');
                 }
+                console.log(' ** OALD: onload finished.');
             });
+            console.log('* OALD: Init 3 finished.');
         }
         catch (exception) {
-            console.log("Selection initialization failed.");
+            console.log('* OALD: Init 3 failed.');
         }
     })();
 
@@ -200,19 +208,20 @@ $(document).ready((function(textInputId) {
     //
 
     function process(html) {
-        var resultStr = "";
+        console.log(' ** OALD: process() started...');
+        var resultStr = '';
 
         var entries = [];
         entries[0] = processPage(html);
 
-        console.log("Other POS:");
+        console.log('Other POS:');
 
         var otherPosRE = /<a href="(.+?)" title=.+?><span class=(?:'|")arl1(?:'|")>.+?<\/span><\/a>/g;
         var otherPos;
 
         while ((otherPos = otherPosRE.exec(html)) != null) {
             var url = otherPos[1];
-            console.log("URL: " + url);
+            console.log('URL: ' + url);
 
             var request = new XMLHttpRequest();
             request.url = url;
@@ -225,37 +234,37 @@ $(document).ready((function(textInputId) {
                     return;
                 }
 
-                console.log("A response was received.");
+                console.log('A response was received.');
 
                 entries[entries.length] = processPage(this.responseText);
             };
 
-            request.open("GET", url, false);
+            request.open('GET', url, false);
             request.send();
         }
 
-        console.log("Other POS end.");
+        console.log('Other POS end.');
 
         //
 
-        var separator = " – ";
+        var separator = ' – ';
 
         resultStr += entries[0].word + separator;
 
-        console.log("Entries length: " + entries.length);
+        console.log('Entries length: ' + entries.length);
 
         for (var i = 0; i < entries.length; i++) {
-            resultStr += entries[i].pos + (entries[i].isKey ? "(k)" : "") + ", ";
+            resultStr += entries[i].pos + (entries[i].isKey ? '(k)' : '') + ', ';
         }
         resultStr = resultStr.substring(0, resultStr.length - 2) + separator;
 
-        var audio = "";
+        var audio = '';
         for (var j = 0; j < entries[0].pronunciations.length; j++) {
-            resultStr += entries[0].pronunciations[j].country + ' /' + entries[0].pronunciations[j].text + "/; ";
-            audio += entries[0].pronunciations[j].country + " " + entries[0].pronunciations[j].audioUrl + "; ";
+            resultStr += entries[0].pronunciations[j].country + ' /' + entries[0].pronunciations[j].text + '/; ';
+            audio += entries[0].pronunciations[j].country + ' ' + entries[0].pronunciations[j].audioUrl + '; ';
         }
         resultStr = resultStr.substring(0, resultStr.length - 2) +
-            " – **comments** – **translation** – **examples** – " +
+            ' – **comments** – **translation** – **examples** – ' +
             audio.substring(0, audio.length - 2);
 
         // Check other pronunciations
@@ -271,7 +280,7 @@ $(document).ready((function(textInputId) {
             for (var j = 0; j < entries[i].pronunciations.length; j++) {
                 pTmpI = entries[i].pronunciations[j].country + entries[i].pronunciations[j].text;
                 if (pTmp0.indexOf(pTmpI) < 0) {
-                    resultStr = "**!! " + resultStr;
+                    resultStr = '**!! ' + resultStr;
                     break checking;
                 }
             }
@@ -280,6 +289,8 @@ $(document).ready((function(textInputId) {
         if (resultStr == '') {
             resultStr = null;
         }
+
+        console.log(' ** OALD: process finished.');
 
         return resultStr;
     }
@@ -294,7 +305,7 @@ $(document).ready((function(textInputId) {
         //  result.pronunciations
         //
 
-        var mainContentRE = /<div id="entryContent">(?:.|\s)+?<!-- End of DIV entry--><\/div>/;
+        var mainContentRE = /<div id="entryContent">(?:.|\s)+?<div class="responsive_row responsive_display_on_smartphone">/;
         var mainContent = mainContentRE.exec(html);
 
         if (mainContent == null) {
@@ -302,7 +313,7 @@ $(document).ready((function(textInputId) {
         }
 
         var result = {};
-        
+
         mainContent = mainContent[0];
 
         var clearRE = /(<span.+?>)|(<\/span>)/g;
@@ -330,16 +341,18 @@ $(document).ready((function(textInputId) {
         result.isKey = (key != null);
 
         // Pronunciation
+        
+        console.log('** OALD: Pronunciations: trying to get...');
 
         result.pronunciations = [];
 
         var tmp = mainContent;
 
-        //var pronunPureRE = /<div class="pron-gs ei-g" eid=((?!verbform="y").)+?><!-- End of DIV pron-gs ei-g--><\/div>/;
-        var pronunPureRE = /<div class="pron-gs ei-g" (?:(tofix="y" )|(careful="y" ))*eid=((?!verbform="y").)+?><!-- End of DIV pron-gs ei-g--><\/div>/;
+        var pronunPureRE = /<div class="pron-gs ei-g" (?:(tofix="y" )|(careful="y" ))*eid=((?!verbform="y").)+?>.*?<\/div><\/span><\/div>/;
         mainContent = pronunPureRE.exec(mainContent);
 
         if (mainContent !== null) {
+            console.log('** OALD: Pronunciations: found.');
             var pronunRE = (AUDIO_TYPE == 'ogg') ?
                 /<span class="(?:bre|name)">(BrE|NAmE)<\/span>.+?<\/span>.+?<\/span>(.+?)<span class="wrap">.+? data-src-ogg="(http:\/\/.+?\.ogg)/g :
                 /<span class="(?:bre|name)">(BrE|NAmE)<\/span>.+?<\/span>.+?<\/span>(.+?)<span class="wrap">.+?(http:\/\/.+?\.mp3)/g;
@@ -349,13 +362,18 @@ $(document).ready((function(textInputId) {
                 var pr = pronun[2].replace(clearRE, '');
                 var url = pronun[3];
                 
+                console.log('** OALD: Pronunciations: ' + url);
+
                 result.pronunciations[result.pronunciations.length] = {country: country, text: pr, audioUrl: url};
             }
+        }
+        else {
+            console.log('** OALD: Pronunciations: not found.');
         }
 
         return result;
     }
 
-    // " –  –  –  –  – "
-    // "word – POS – transcription – **comments** – **translation** – **examples** - audio_paths"
+    // ' –  –  –  –  – '
+    // 'word – POS – transcription – **comments** – **translation** – **examples** - audio_paths'
 })("#q"));
