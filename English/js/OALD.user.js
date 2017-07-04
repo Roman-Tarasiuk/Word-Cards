@@ -10,11 +10,11 @@ $(document).ready((function(textInputId) {
     // *             • • •  Configuration  • • •             *
     // *                                                     *
     // *   Start automatic download audio: true or false     *
-            var AUTO_DOWNLOAD = true;
+            var AUTO_DOWNLOAD = false;
     // *                                                     *
     // *                                                     *
     // *   Type of audio files to download: 'mp3' or 'ogg'   *
-            var AUDIO_TYPE = 'ogg';
+            var AUDIO_TYPE = 'mp3';
     // *                                                     *
     // *******************************************************
 
@@ -129,7 +129,7 @@ $(document).ready((function(textInputId) {
         console.log('* OALD: Init 1 complete.');
     }
     catch (exception) {
-        console.log('Something wrong in download module');
+        console.log(' ** OALD: Something wrong in download module (exception)...');
     }
 
     //
@@ -192,7 +192,7 @@ $(document).ready((function(textInputId) {
                     }
                 }
                 else {
-                    console.log('Word content not found.');
+                    console.log(' ** OALD: Word content not found.');
                 }
                 console.log(' ** OALD: onload finished.');
             });
@@ -214,14 +214,14 @@ $(document).ready((function(textInputId) {
         var entries = [];
         entries[0] = processPage(html);
 
-        console.log('Other POS:');
+        console.log(' ** OALD: Other POS list:');
 
         var otherPosRE = /<a href="(.+?)" title=.+?><span class=(?:'|")arl1(?:'|")>.+?<\/span><\/a>/g;
         var otherPos;
 
         while ((otherPos = otherPosRE.exec(html)) != null) {
             var url = otherPos[1];
-            console.log('URL: ' + url);
+            console.log(' ** OALD: URL: ' + url);
 
             var request = new XMLHttpRequest();
             request.url = url;
@@ -234,7 +234,7 @@ $(document).ready((function(textInputId) {
                     return;
                 }
 
-                console.log('A response was received.');
+                console.log(' ** OALD: A response was received.');
 
                 entries[entries.length] = processPage(this.responseText);
             };
@@ -243,7 +243,7 @@ $(document).ready((function(textInputId) {
             request.send();
         }
 
-        console.log('Other POS end.');
+        console.log(' ** OALD: Other POS list end.');
 
         //
 
@@ -251,7 +251,7 @@ $(document).ready((function(textInputId) {
 
         resultStr += entries[0].word + separator;
 
-        console.log('Entries length: ' + entries.length);
+        console.log(' ** OALD: Entries length: ' + entries.length);
 
         for (var i = 0; i < entries.length; i++) {
             resultStr += entries[i].pos + (entries[i].isKey ? '(k)' : '') + ', ';
@@ -290,7 +290,7 @@ $(document).ready((function(textInputId) {
             resultStr = null;
         }
 
-        console.log(' ** OALD: process finished.');
+        console.log(' ** OALD: process() finished.');
 
         return resultStr;
     }
@@ -304,6 +304,8 @@ $(document).ready((function(textInputId) {
         //  result.isKey
         //  result.pronunciations
         //
+
+        console.log(' ** OALD: processPage()');
 
         var mainContentRE = /<div id="entryContent">(?:.|\s)+?<div class="responsive_row responsive_display_on_smartphone">/;
         var mainContent = mainContentRE.exec(html);
@@ -322,7 +324,7 @@ $(document).ready((function(textInputId) {
 
         var wordRE = /(?:<h2 class="h">)(.+?)(?:<\/h2>)/;
         var word = wordRE.exec(mainContent);
-        console.log(word[1]);
+        console.log(' ** OALD: ' + word[1]);
 
         result.word = word[1].replace(clearRE, '');
 
@@ -330,9 +332,17 @@ $(document).ready((function(textInputId) {
 
         var posRE = /(?:<span class="pos">)(.+?)(?:<\/span>)/;
         var pos = posRE.exec(mainContent);
-        console.log(pos[1]);
 
-        result.pos = pos[1];
+        if (pos != null) {
+            console.log(' ** OALD: ' + pos[1]);
+
+            result.pos = pos[1];
+        }
+        else {
+            console.log(' ** OALD: No POS.');
+
+            result.pos = 'NoPOS';
+        }
 
         //
 
@@ -341,18 +351,20 @@ $(document).ready((function(textInputId) {
         result.isKey = (key != null);
 
         // Pronunciation
-        
-        console.log('** OALD: Pronunciations: trying to get...');
+
+        console.log(' ** OALD: Pronunciations: trying to get...');
 
         result.pronunciations = [];
 
         var tmp = mainContent;
 
+        //var pronunPureRE = /<div class="pron-gs ei-g" eid=((?!verbform="y").)+?><!-- End of DIV pron-gs ei-g--><\/div>/;
+        //var pronunPureRE = /<div class="pron-gs ei-g" (?:(tofix="y" )|(careful="y" ))*eid=((?!verbform="y").)+?><!-- End of DIV pron-gs ei-g--><\/div>/;
         var pronunPureRE = /<div class="pron-gs ei-g" (?:(tofix="y" )|(careful="y" ))*eid=((?!verbform="y").)+?>.*?<\/div><\/span><\/div>/;
         mainContent = pronunPureRE.exec(mainContent);
 
         if (mainContent !== null) {
-            console.log('** OALD: Pronunciations: found.');
+            console.log(' ** OALD: Pronunciations: found.');
             var pronunRE = (AUDIO_TYPE == 'ogg') ?
                 /<span class="(?:bre|name)">(BrE|NAmE)<\/span>.+?<\/span>.+?<\/span>(.+?)<span class="wrap">.+? data-src-ogg="(http:\/\/.+?\.ogg)/g :
                 /<span class="(?:bre|name)">(BrE|NAmE)<\/span>.+?<\/span>.+?<\/span>(.+?)<span class="wrap">.+?(http:\/\/.+?\.mp3)/g;
@@ -361,15 +373,17 @@ $(document).ready((function(textInputId) {
                 var country = pronun[1];
                 var pr = pronun[2].replace(clearRE, '');
                 var url = pronun[3];
-                
-                console.log('** OALD: Pronunciations: ' + url);
+
+                console.log(' ** OALD: Pronunciation: ' + url);
 
                 result.pronunciations[result.pronunciations.length] = {country: country, text: pr, audioUrl: url};
             }
         }
         else {
-            console.log('** OALD: Pronunciations: not found.');
+            console.log(' ** OALD: Pronunciations: not found.');
         }
+
+        console.log(' ** OALD: processPage() finished.');
 
         return result;
     }
