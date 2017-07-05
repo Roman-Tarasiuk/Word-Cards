@@ -1,6 +1,10 @@
-.srch {
+.super-search {
     background-color: #ffec80;
     padding: 3px;
+}
+
+.srch {
+    background-color: #abc;
 }
 
 div#srchResults1 {

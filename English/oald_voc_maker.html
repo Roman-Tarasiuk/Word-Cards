@@ -22,7 +22,7 @@
     <!-- Vocabulary maker -->
     <div class="voc-maker">
         <div style="margin: 0;">
-            <span style="color:#777">Format / Check:</span>
+            <span class="title" style="color:#777">Format / Check:</span>
             <br>
             <textarea id="txtInfo" class="convenientWidth" style="height:150px; font-family: times, serif; font-size: 20px;"></textarea>
 
@@ -57,11 +57,11 @@
                 <input type=button id="processChangesBtn" value="Process changes"  onclick="processChangesManually()" disabled>
             </div>
         </div>
-        <span style="color:#777; margin: 10px 0 0 0;">Preview:</span>
+        <span class="title" style="color:#777; margin: 10px 0 0 0;">Preview:</span>
         <hr style="margin: 0;" class="convenientWidth">
         <p id="oald" class="convenientWidth convenientFont" style="margin: 0 !important;" ondblclick="selectPWithoutTail()">...</p>
         <div style="margin: 10px 0 0 0;">
-            <span style="color:#777">Temporary storage:</span>
+            <span class="title" style="color:#777">Temporary storage:</span>
             <br>
             <textarea id="temporaryStorage" class="convenientWidth" style="height:150px; font-family: times, serif;" ondblclick="selectWithoutTail(document.getElementById('temporaryStorage'))" placeholder="Save text temporarily here."></textarea>
             <br>
@@ -70,7 +70,7 @@
     </div>
 
     <!-- Super search -->
-    <div class="srch">
+    <div class="super-search">
         <h2>Super Search</h2>
         <div>
             <p class="title">Search in text:</p>

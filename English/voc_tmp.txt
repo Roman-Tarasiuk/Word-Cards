@@ -1,0 +1,3 @@
+In the last year, the company has been under increasing pressure from <exmpl>competitors</exmpl>.
+After a week long <exmpl>off-site</exmpl> brainstorming session over <exmpl>golf</exmpl>, the company <exmpl>executives</exmpl> think it’s time for a big innovation.
+The executives decided that flying ducks is just what the simulator needs to blow away the other duck <exmpl>sim</exmpl> <exmpla>competitors</exmpla>.
