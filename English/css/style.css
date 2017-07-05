@@ -6,6 +6,11 @@ html, body {
     height: 100%;
 }
 
+.voc-maker {
+    background-color: #b3d9ff;
+    padding: 3px;
+}
+
 .navigate {
     float: left;
     width: 50px;
