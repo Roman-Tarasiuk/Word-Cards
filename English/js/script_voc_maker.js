@@ -163,15 +163,7 @@ function processOald() {
         }
         text += "<hr style='margin: 0;'>";
     }
-    //text = text.substring(0, text.length - 8);
-    var strangeStr = '<p><\\p>';
-    var pos = text.indexOf(strangeStr);
-    if (pos >= 0) {
-        console.log('** contains <p><\\p>')
-    }
-    else {
-        console.log('** does not contain <p><\\p>')
-    }
+
     document.getElementById("oald").innerHTML = text;
 }
 

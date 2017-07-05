@@ -1,14 +1,14 @@
-$("#txtInfo").resizable({
+$("#txtInfoSrch").resizable({
     resize: setSrchResultsWidth
 });
 
 function clearAll() {
-    document.getElementById('txtInfo').value='';
+    document.getElementById('txtInfoSrch').value='';
     document.getElementById('srchResults').innerText='';
 }
 
 function setSrchResultsWidth() {
-        var w = $("#txtInfo").width();
+        var w = $("#txtInfoSrch").width();
         $("#srchResults").width(w);
 }
 
@@ -19,12 +19,12 @@ function openFile(event) {
 
     var reader = new FileReader();
     reader.onload = function(){
-        var txtInfo = document.getElementById('txtInfo');
-        if (txtInfo.value == '') {
-            txtInfo.value = reader.result;
+        var txtInfoSrch = document.getElementById('txtInfoSrch');
+        if (txtInfoSrch.value == '') {
+            txtInfoSrch.value = reader.result;
         }
         else {
-            txtInfo.value += '\n' + reader.result;
+            txtInfoSrch.value += '\n' + reader.result;
         }
     };
 
@@ -92,22 +92,22 @@ var replaceGT = />/g;
 
 //* Working version, backup 25.11.2015
 function search1() {
-    var inputTxtInfo = document.getElementById("txtInfo");
+    var inputtxtInfoSrch = document.getElementById("txtInfoSrch");
     var inputSrchFor = document.getElementById("srchFor");
     var inputMinLength = document.getElementById("minLength");
     var inputSrchResults = document.getElementById("srchResults");
 
-    var txtInfo = inputTxtInfo.value;
+    var txtInfoSrch = inputtxtInfoSrch.value;
     var srchFor = inputSrchFor.value;
     var minLength = parseInt(inputMinLength.value);
 
     //*
-    if(replaceLT.test(txtInfo) || replaceGT.test(txtInfo)) {
-        txtInfo = txtInfo.replace(replaceLT, '&lt').replace(replaceGT, '&gt');
+    if(replaceLT.test(txtInfoSrch) || replaceGT.test(txtInfoSrch)) {
+        txtInfoSrch = txtInfoSrch.replace(replaceLT, '&lt').replace(replaceGT, '&gt');
     }
     //*/
 
-    var rows = txtInfo.split("\n");
+    var rows = txtInfoSrch.split("\n");
 
     if(srchFor.length < minLength) {
         minLength = srchFor.length;
@@ -142,22 +142,22 @@ function search1() {
 
 //*
 function search2() {
-    var inputTxtInfo = document.getElementById("txtInfo");
+    var inputtxtInfoSrch = document.getElementById("txtInfoSrch");
     var inputSrchFor = document.getElementById("srchFor");
     var inputMinLength = document.getElementById("minLength");
     var inputSrchResults = document.getElementById("srchResults");
 
-    var txtInfo = inputTxtInfo.value;
+    var txtInfoSrch = inputtxtInfoSrch.value;
     var srchFor = inputSrchFor.value;
     var minLength = parseInt(inputMinLength.value);
 
     //*
-    if(replaceLT.test(txtInfo) || replaceGT.test(txtInfo)) {
-        txtInfo = txtInfo.replace(replaceLT, '&lt').replace(replaceGT, '&gt');
+    if(replaceLT.test(txtInfoSrch) || replaceGT.test(txtInfoSrch)) {
+        txtInfoSrch = txtInfoSrch.replace(replaceLT, '&lt').replace(replaceGT, '&gt');
     }
     //*/
 
-    var rows = txtInfo.split("\n");
+    var rows = txtInfoSrch.split("\n");
 
     if(srchFor.length < minLength) {
         minLength = srchFor.length;

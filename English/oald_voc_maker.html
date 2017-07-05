@@ -10,6 +10,7 @@
 
     <link rel="stylesheet" href="css/jquery-ui.min.css" type="text/css" media="all">
     <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/style_voc_maker.css">
     <style>
         body {
             margin: 5px;
@@ -18,55 +19,97 @@
 </head>
 
 <body onload="processOald()">
-    <div style="margin: 0;">
-        <span style="color:#777">Format / Check:</span>
-        <br>
-        <textarea id="txtInfo" class="convenientWidth" style="height:150px; font-family: times, serif; font-size: 20px;"></textarea>
+    <!-- Vocabulary maker -->
+    <div>
+        <div style="margin: 0;">
+            <span style="color:#777">Format / Check:</span>
+            <br>
+            <textarea id="txtInfo" class="convenientWidth" style="height:150px; font-family: times, serif; font-size: 20px;"></textarea>
 
-        <button onclick="removeRedundantLineBreaks()"><img src="img/Adobe_Reader_v9.0_icon_small.png" /> Remove redundant line breaks</button>
-        &nbsp;
-
-        <input type=button value="<exmpl>" onclick="surroundWithTag('exmpl')" class="tagButton">
-        <input type=button value="<exmpla>" onclick="surroundWithTag('exmpla')" class="tagButton">
-        <input type=button value="<phr>" onclick="surroundWithTag('phr')" class="tagButton">
-        <input type=button value="<i>" onclick="surroundWithTag('i')" class="tagButton" style="font-style: italic; color: #fff">
-        <input type=button value="<b>" onclick="surroundWithTag('b')" class="tagButton" style="font-weight: bold; color: #fff">
-        <input type=button value="<code>" onclick="surroundWithTag('code')" class="tagButton">
-        &nbsp;
-
-        <input type=button value="Pick" onclick="pick()">
-        &nbsp;
-        <input type=button value="|••• &larr;" onclick="selLeftToLeft()" title="Current selection: move left margin to left">
-        <input type=button value="|••• &rarr;" onclick="selLeftToRight()" title="Current selection: move left margin to right" style="position: relative; left: -4px;">
-        <input type=button value="•••| &larr;" onclick="selRightToLeft()" title="Current selection: move right margin to left" >
-        <input type=button value="•••| &rarr;" onclick="selRightToRight()" title="Current selection: move right margin to right" style="position: relative; left: -4px;">
-        &nbsp;
-        <input type=button value="  ↓  " title="Move examples to temporary storage" onclick="appendExample()" style="background-color:#7be1fa">
-        <br>
-
-        <input type=button value="Show entry template" onclick="entryTemplate()">
-        <input type=button value="Remove <tags>" onclick="removeAllTags()" style="color:#0298bd; background-color:#c9f0c9">
-        <input type=button value="Remove **placeholders**" onclick="removePlaceholders()" style="color:#0298bd; background-color:#c9f0c9">
-        <!-- <br> -->
-        <div style="position: relative; left: 218px; margin: 0; width: calc(100% - 218px)">
+            <button onclick="removeRedundantLineBreaks()"><img src="img/Adobe_Reader_v9.0_icon_small.png" /> Remove redundant line breaks</button>
             &nbsp;
-            <input type=checkbox id="processChangesChk" onclick="switchProcessState()" checked> Process changes automatically
-            <input type=button id="processChangesBtn" value="Process changes"  onclick="processChangesManually()" disabled>
+
+            <input type=button value="<exmpl>" onclick="surroundWithTag('exmpl')" class="tagButton">
+            <input type=button value="<exmpla>" onclick="surroundWithTag('exmpla')" class="tagButton">
+            <input type=button value="<phr>" onclick="surroundWithTag('phr')" class="tagButton">
+            <input type=button value="<i>" onclick="surroundWithTag('i')" class="tagButton" style="font-style: italic; color: #fff">
+            <input type=button value="<b>" onclick="surroundWithTag('b')" class="tagButton" style="font-weight: bold; color: #fff">
+            <input type=button value="<code>" onclick="surroundWithTag('code')" class="tagButton">
+            &nbsp;
+
+            <input type=button value="Pick" onclick="pick()">
+            &nbsp;
+            <input type=button value="|••• &larr;" onclick="selLeftToLeft()" title="Current selection: move left margin to left">
+            <input type=button value="|••• &rarr;" onclick="selLeftToRight()" title="Current selection: move left margin to right" style="position: relative; left: -4px;">
+            <input type=button value="•••| &larr;" onclick="selRightToLeft()" title="Current selection: move right margin to left" >
+            <input type=button value="•••| &rarr;" onclick="selRightToRight()" title="Current selection: move right margin to right" style="position: relative; left: -4px;">
+            &nbsp;
+            <input type=button value="  ↓  " title="Move examples to temporary storage" onclick="appendExample()" style="background-color:#7be1fa">
+            <br>
+
+            <input type=button value="Show entry template" onclick="entryTemplate()">
+            <input type=button value="Remove <tags>" onclick="removeAllTags()" style="color:#0298bd; background-color:#c9f0c9">
+            <input type=button value="Remove **placeholders**" onclick="removePlaceholders()" style="color:#0298bd; background-color:#c9f0c9">
+            <!-- <br> -->
+            <div style="position: relative; left: 218px; margin: 0; width: calc(100% - 218px)">
+                &nbsp;
+                <input type=checkbox id="processChangesChk" onclick="switchProcessState()" checked> Process changes automatically
+                <input type=button id="processChangesBtn" value="Process changes"  onclick="processChangesManually()" disabled>
+            </div>
+        </div>
+        <span style="color:#777; margin: 10px 0 0 0;">Preview:</span>
+        <hr style="margin: 0;" class="convenientWidth">
+        <p id="oald" class="convenientWidth convenientFont" style="margin: 0 !important;" ondblclick="selectPWithoutTail()">...</p>
+        <div style="margin: 10px 0 0 0;">
+            <span style="color:#777">Temporary storage:</span>
+            <br>
+            <textarea id="temporaryStorage" class="convenientWidth" style="height:150px; font-family: times, serif;" ondblclick="selectWithoutTail(document.getElementById('temporaryStorage'))" placeholder="Save text temporarily here."></textarea>
+            <br>
+            <input type=button value="Save" onclick="saveTextAsFile()" style="padding: 5px;" title="Save temporary data to file.">
         </div>
     </div>
-    <span style="color:#777; margin: 10px 0 0 0;">Preview:</span>
-    <hr style="margin: 0;" class="convenientWidth">
-    <p id="oald" class="convenientWidth convenientFont" style="margin: 0 !important;" ondblclick="selectPWithoutTail()">...</p>
-    <div style="margin: 10px 0 0 0;">
-        <span style="color:#777">Temporary storage:</span>
-        <br>
-        <textarea id="temporaryStorage" class="convenientWidth" style="height:150px; font-family: times, serif;" ondblclick="selectWithoutTail(document.getElementById('temporaryStorage'))" placeholder="Save text temporarily here."></textarea>
-        <br>
-        <input type=button value="Save" onclick="saveTextAsFile()" style="padding: 5px;" title="Save temporary data to file.">
+
+    <br>
+    <br>
+
+    <!-- Super search -->
+    <div>
+        <h2>Super Search</h2>
+        <div>
+            <p class="title">Search in text:</p>
+            <textarea id="txtInfoSrch" style="height:260px; font-family: times, serif;" class="convenientWidth"></textarea>
+            <br>
+            Append file:
+            <input type=file accept="text/plain" onchange="openFile(event)" style="padding: 10px;">
+            <input type=button value="Clear" onclick="clearAll()">
+            <br>
+        </div>
+        <div>
+            <span>Search for: </span>
+            <input type=text id="srchFor" onkeyup="return onInputKeyUp(event)" style="font-size:larger">
+            <span style="color: gray; margin-left: 5px;" id="srchLength"></span>
+            <br/>
+            <span>Minimum characters: </span>
+            <input type=number id="minLength" value="4" style="font-size:larger" onkeyup="return onInputKeyUp(event)" onchange="srchLength()">
+            <span style="color: gray; margin-left: 5px;" id="srchTexts"></span>
+        </div>
+        <div>
+            <label for="ver1"> <input type=radio name="srchVersion" id="ver1"                  /> Search v. 1 </label>
+            <label for="ver2"> <input type=radio name="srchVersion" id="ver2" checked="checked"/> Search v. 2 </label>
+        </div>
+        <div>
+            <input type="button" onclick="search()" value="Search">
+        </div>
+        <div>
+            <strong>Search results:</strong>
+            <br>
+            <p id="srchResults"></p>
+        </div>
     </div>
 
     <!-- End of body elements -->
 
     <script src="js/script_voc_maker.js"></script>
+    <script src="js/script_super_search.js"></script>
 </body>
 </html>
