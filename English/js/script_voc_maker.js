@@ -227,28 +227,22 @@ function removeAllTags() {
 }
 
 function selectWithoutTail(textArea) {
+    // Automatically selected trailing spaces/tabs.
     while (textArea.value[textArea.selectionEnd - 1] == " "
             || textArea.value[textArea.selectionEnd - 1] == "\t") {
         textArea.selectionEnd--;
     }
+    
+    var delimiters = ['\n', ' ', '\t', ',', '.', ';', '"', '\'', '—', '’'];
     while (textArea.selectionEnd < textArea.value.length
-        && textArea.value[textArea.selectionEnd] != " "
-        && textArea.value[textArea.selectionEnd] != "\t"
-        && textArea.value[textArea.selectionEnd] != ","
-        && textArea.value[textArea.selectionEnd] != ";"
-        && textArea.value[textArea.selectionEnd] != '"'
-        && textArea.value[textArea.selectionEnd] != '—') {
+        && delimiters.indexOf(textArea.value[textArea.selectionEnd]) == -1) {
         textArea.selectionEnd++;
+        console.log('textArea.selectionEnd++');
     }
     while (textArea.selectionStart > 0
-        && textArea.value[textArea.selectionStart - 1] != "\n"
-        && textArea.value[textArea.selectionStart - 1] != " "
-        && textArea.value[textArea.selectionStart - 1] != "\t"
-        && textArea.value[textArea.selectionStart - 1] != ","
-        && textArea.value[textArea.selectionStart - 1] != ";"
-        && textArea.value[textArea.selectionStart - 1] != '"'
-        && textArea.value[textArea.selectionStart - 1] != '—') {
+        && delimiters.indexOf(textArea.value[textArea.selectionStart - 1]) == -1) {
         textArea.selectionStart--;
+        console.log('textArea.selectionStart--');
     }
 
     if (textArea.value[textArea.selectionStart] == '(') {
