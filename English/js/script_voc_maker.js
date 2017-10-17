@@ -233,7 +233,7 @@ function selectWithoutTail(textArea) {
         textArea.selectionEnd--;
     }
     
-    var delimiters = ['\n', ' ', '\t', ',', '.', ';', '"', '\'', '—', '’'];
+    var delimiters = ['\n', ' ', '\t', ',', '.', ';', '"', '\'', '—', '’', '!', '?'];
     while (textArea.selectionEnd < textArea.value.length
         && delimiters.indexOf(textArea.value[textArea.selectionEnd]) == -1) {
         textArea.selectionEnd++;
