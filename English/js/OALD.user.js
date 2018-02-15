@@ -1,5 +1,12 @@
+// ==UserScript==
+// @name        OALD
+// @namespace   oald
+// @include     https://www.oxfordlearnersdictionaries.com/*
+// @version     1
+// @grant       none
+// @require http://localhost:8080/jquery-2.2.0.min.js
+// ==/UserScript==
 //
-// @require https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js
 //
 $(document).ready((function(textInputId) {
 
@@ -124,7 +131,7 @@ $(document).ready((function(textInputId) {
                 xhr.open('GET', url);
                 xhr.send();
             }
-        }
+        };
 
         console.log('* OALD: Init 1 complete.');
     }
@@ -307,7 +314,7 @@ $(document).ready((function(textInputId) {
 
         console.log(' ** OALD: processPage()');
 
-        var mainContentRE = /<div id="entryContent">(?:.|\s)+?<div class="responsive_row responsive_display_on_smartphone">/;
+        var mainContentRE = /<div id="entryContent"(?:.|\s)+?<div class="responsive_row responsive_display_on_smartphone">/;
         var mainContent = mainContentRE.exec(html);
 
         if (mainContent == null) {
@@ -318,7 +325,7 @@ $(document).ready((function(textInputId) {
 
         mainContent = mainContent[0];
 
-        var clearRE = /(<span.+?>)|(<\/span>)/g;
+        var clearRE = /(<span.+?>)|(<\/span>)|\//g;
 
         //
 
@@ -366,8 +373,8 @@ $(document).ready((function(textInputId) {
         if (mainContent !== null) {
             console.log(' ** OALD: Pronunciations: found.');
             var pronunRE = (AUDIO_TYPE == 'ogg') ?
-                /<span class="(?:bre|name)">(BrE|NAmE)<\/span>.+?<\/span>.+?<\/span>(.+?)<span class="wrap">.+? data-src-ogg="(http:\/\/.+?\.ogg)/g :
-                /<span class="(?:bre|name)">(BrE|NAmE)<\/span>.+?<\/span>.+?<\/span>(.+?)<span class="wrap">.+?(http:\/\/.+?\.mp3)/g;
+                /<span class="(?:blue|red)">(BrE|NAmE)<\/span>.+?<\/span>.+?<\/span>(.+?)<span class="wrap">.+? data-src-ogg="(https:\/\/.+?\.ogg)/g :
+                /<span class="(?:blue|red)">(BrE|NAmE)<\/span>.+?<\/span>.+?<\/span>(.+?)<span class="wrap">.+?(https:\/\/.+?\.mp3)/g;
             var pronun;
             while ((pronun = pronunRE.exec(mainContent)) != null) {
                 var country = pronun[1];
