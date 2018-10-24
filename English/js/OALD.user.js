@@ -80,8 +80,8 @@ $(document).ready((function(textInputId) {
                 var result = [];
 
                 var urlRE = (AUDIO_TYPE == 'ogg') ?
-                    /http:\/\/.+?\.ogg/g :
-                    /http:\/\/.+?\.mp3/g;
+                    /https:\/\/.+?\.ogg/g :
+                    /https:\/\/.+?\.mp3/g;
 
                 var url;
                 while ((url = urlRE.exec(text)) != null) {
@@ -353,7 +353,7 @@ $(document).ready((function(textInputId) {
 
         //
 
-        var keyRE = /<a class=\"oxford3000\" href=\"http:\/\/www.oxfordlearnersdictionaries.com\/wordlist\/english\/oxford3000\/\">.*?<\/a>/;
+        var keyRE = /<a class=\"oxford3000\" href=\"https:\/\/www.oxfordlearnersdictionaries.com\/wordlist\/english\/oxford3000\/\">.*?<\/a>/;
         var key = keyRE.exec(mainContent);
         result.isKey = (key != null);
 
