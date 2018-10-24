@@ -13,8 +13,7 @@ var pluginHtml =
 <div class="helper">
     <input id="word" class="w">
     <input id="pronunciation" class="w">
-    <input id="pronunciation1" class="w">
-    <input id="pronunciation2" class="w">
+    <input id="pronunciationOald" class="w">
     <button onclick="window.helper.process()">Add/Update</button>
     <br>
     <textarea id="info" class="w"></textarea>
@@ -59,7 +58,6 @@ function Helper() {
 
     this.pronunciationEl = null;
     this.pronunciationEl1 = null;
-    this.pronunciationEl2 = null;
     this.wordEl = null;
 
     this.run = function(html, insertPlace) {
@@ -87,8 +85,7 @@ function Helper() {
         }
 
         that.pronunciationEl = document.getElementById('pronunciation');
-        that.pronunciationEl1 = document.getElementById('pronunciation1');
-        that.pronunciationEl2 = document.getElementById('pronunciation2');
+        that.pronunciationEl1 = document.getElementById('pronunciationOald');
         that.wordEl = document.getElementById('word');
 
         setInterval(that.trackPage, that.interval);
@@ -105,24 +102,21 @@ function Helper() {
     this.process = function() {
         var word = document.getElementById('word').value;
         var pronunciation = document.getElementById('pronunciation').value;
-        var pronunciation1 = document.getElementById('pronunciation1').value;
-        var pronunciation2 = document.getElementById('pronunciation2').value;
+        var pronunciationOald = document.getElementById('pronunciationOald').value;
 
         var index = that.indexOf(word);
         if (index == -1) {
             that.words.push({
                 word: word,
                 pronunciation: pronunciation,
-                pronunciation1: pronunciation1,
-                pronunciation2: pronunciation2
+                pronunciationOald: pronunciationOald,
             });
         }
         else {
             if (pronunciation.includes('static.memrise.com')) {
                 that.words[index].pronunciation = pronunciation;
             }
-            that.words[index].pronunciation1 = pronunciation1;
-            that.words[index].pronunciation2 = pronunciation2;
+            that.words[index].pronunciationOald = pronunciationOald;
         }
 
         // If mp3s are updated – to process this in the trackPage().
@@ -194,8 +188,7 @@ function Helper() {
                 if (that.pronunciationEl.value == '') {
                     that.pronunciationEl.value = that.words[index].pronunciation ? that.words[index].pronunciation : '';
                 }
-                that.pronunciationEl1.value = that.words[index].pronunciation1;
-                that.pronunciationEl2.value = that.words[index].pronunciation2;
+                that.pronunciationEl1.value = that.words[index].pronunciationOald;
 
                 var mp32 = document.getElementById('newMp32');
                 if (mp32 == null) {
@@ -207,8 +200,9 @@ function Helper() {
                     mp32.setAttribute('id', 'newMp32');
                 }
 
-                var pronunciation1 = that.words[index].pronunciation1;
-                var pronunciation2 = that.words[index].pronunciation2;
+                var pronunciations = that.getPronunciationUrls(that.words[index].pronunciationOald);
+				var pronunciation1 = pronunciations[0];
+                var pronunciation2 = pronunciations[1];
                 mp31.children[0].children[0].innerHTML =
                     '<a class="audio-player audio-player-hover" href="'
                     + (that.useLocalServer ? that.pathToLocal(pronunciation1) : pronunciation1)
@@ -220,12 +214,17 @@ function Helper() {
             }
             else {
                 that.pronunciationEl1.value = '';
-                that.pronunciationEl2.value = '';
             }
         }
 
         console.log('** Done.');
     };
+	
+	this.getPronunciationUrls = function(oaldStr) {
+		var pathRe = /https:*\/\/.*?\.mp3/g;
+		var result = oaldStr.match(pathRe);
+		return result;
+	}
 
     this.showLocalStorage = function() {
         document.getElementById('info').value = localStorage.getItem('myVocabulary');
@@ -250,10 +249,11 @@ function Helper() {
 
         for (var i = 0; i < that.words.length; i++) {
             if (that.words[i].pronunciation) {
+				var pronunciations = that.getPronunciationUrls(that.words[i].pronunciationOald);
                 result += '\n{"type":"normalOverride","match":"'
                     + that.words[i].pronunciation
                     + '","replace":"'
-                    + (that.useLocalServer ? that.pathToLocal(that.words[i].pronunciation1) : that.words[i].pronunciation1)
+                    + (that.useLocalServer ? that.pathToLocal(pronunciations[0]) : pronunciations[0])
                     + '","on":true}' + (i < (that.words.length - 1) ? ',' : '');
             }
         }
