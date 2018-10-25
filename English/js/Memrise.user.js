@@ -57,7 +57,7 @@ function Helper() {
     this.words = [];
 
     this.pronunciationEl = null;
-    this.pronunciationEl1 = null;
+    this.pronunciationElOald = null;
     this.wordEl = null;
 
     this.run = function(html, insertPlace) {
@@ -85,7 +85,7 @@ function Helper() {
         }
 
         that.pronunciationEl = document.getElementById('pronunciation');
-        that.pronunciationEl1 = document.getElementById('pronunciationOald');
+        that.pronunciationElOald = document.getElementById('pronunciationOald');
         that.wordEl = document.getElementById('word');
 
         setInterval(that.trackPage, that.interval);
@@ -133,6 +133,12 @@ function Helper() {
         }
         return -1;
     };
+	
+	this.clearInfo = function() {
+		that.wordEl.value = '';
+		that.pronunciationEl.value = '';
+		that.pronunciationElOald.value = '';
+	}
 
     this.trackPage = function() {
         console.log('** Tracking...');
@@ -144,6 +150,7 @@ function Helper() {
               || q.children[0].children[1].children[0].children == undefined
               || q.children[0].children[1].children[0].children.length < 2) {
                 that.currentWord = '';
+				that.clearInfo();
                 console.log('** Exit (undefined)');
                 return;
             }
@@ -161,6 +168,7 @@ function Helper() {
         }
         else
         {
+			that.clearInfo();
             console.log('** No word found.');
             return;
         }
@@ -188,7 +196,7 @@ function Helper() {
                 if (that.pronunciationEl.value == '') {
                     that.pronunciationEl.value = that.words[index].pronunciation ? that.words[index].pronunciation : '';
                 }
-                that.pronunciationEl1.value = that.words[index].pronunciationOald;
+                that.pronunciationElOald.value = that.words[index].pronunciationOald;
 
                 var mp32 = document.getElementById('newMp32');
                 if (mp32 == null) {
@@ -213,7 +221,7 @@ function Helper() {
                     + '"></a>';
             }
             else {
-                that.pronunciationEl1.value = '';
+                that.pronunciationElOald.value = '';
             }
         }
 
