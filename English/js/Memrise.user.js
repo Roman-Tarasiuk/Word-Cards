@@ -133,7 +133,7 @@ function Helper() {
         }
         return -1;
     };
-	
+
 	this.clearInfo = function() {
 		that.wordEl.value = '';
 		that.pronunciationEl.value = '';
@@ -164,7 +164,7 @@ function Helper() {
         if (q.children[0].children[1].children[0].children[1].children[1].children
            && q.children[0].children[1].children[0].children[1].children[1].children.length > 0)
         {
-            word = q.children[0].children[1].children[0].children[1].children[1].children[0].innerText;
+            word = q.children[0].children[1].children[0].children[1].children[1].children[0].innerText.trim();
         }
         else
         {
@@ -227,7 +227,7 @@ function Helper() {
 
         console.log('** Done.');
     };
-	
+
 	this.getPronunciationUrls = function(oaldStr) {
 		var pathRe = /https:*\/\/.*?\.mp3/g;
 		var result = oaldStr.match(pathRe);
