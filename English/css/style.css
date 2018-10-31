@@ -35,7 +35,7 @@ html, body {
 }
 
 .info {
-    width: calc(100% - 100px - 20px); /* Navigation panes and padding */
+    width: calc(100% - 100px); /* Navigation panes and padding */
     min-height: calc(100vh - 20px);
     /* background-color: #ff9; */
     /* background-color: #f2f2f2; */
@@ -196,7 +196,7 @@ hr {
     font-family: sans-serif;
 }
 
-.progress {
+.progress2 {
     margin-top: 20px;
     text-align: right;
 }
