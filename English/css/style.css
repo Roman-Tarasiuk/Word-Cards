@@ -2,6 +2,7 @@
     margin: 0;
 }
 
+
 html, body {
     height: 100%;
 }
@@ -221,7 +222,7 @@ exmpl {
     color: limegreen;
 }
 
-exmpla {
+exmpl-lnk {
     color: #39f;
 }
 
@@ -268,4 +269,8 @@ phr {
 ::selection {
     color: black;
     background: #9bf;
+}
+
+word-lnk {
+    display: none;
 }

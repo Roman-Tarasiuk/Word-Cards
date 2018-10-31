@@ -12,7 +12,10 @@ var entries,
     wordsIndex = [],
     wordsHistory = [],
     audios = null,
-    functions = null;
+    functions = null,
+    chkLearnRange = document.getElementsByName('learnRange');
+    
+var replaceToLiRe = / ### /g;
 
 init();
 
@@ -47,10 +50,8 @@ function moveRight() {
 }
 
 function incrementCurrent() {
-    var r = document.getElementsByName('learnRange');
-
     current++;
-    if (r[0].checked) { // all
+    if (chkLearnRange[0].checked) { // all
         if (current == entries.length) {
             current = 0;
         }
@@ -65,7 +66,7 @@ function incrementCurrent() {
 }
 
 function moveLeft() {
-    decrementCurrent()
+    decrementCurrent();
 
     wordsHistory = [];
 
@@ -76,10 +77,8 @@ function moveLeft() {
 }
 
 function decrementCurrent() {
-    var r = document.getElementsByName('learnRange');
-
     current--;
-    if (r[0].checked) { // all
+    if (chkLearnRange[0].checked) { // all
         if (current == -1) {
             current = entries.length - 1;
         }
@@ -94,9 +93,7 @@ function decrementCurrent() {
 }
 
 function checkRange() {
-    var r = document.getElementsByName('learnRange');
-
-    if (r[0].checked) { // all
+    if (chkLearnRange[0].checked) { // all
         return;
     }
     else { // range
@@ -232,14 +229,13 @@ function showCurrent() {
     $("#comment").html(parts[3]);
 
     $("#translation").html(parts[4]);
-    $("#examples").html(parts[5]);
+    $("#examples").html(formatExamples(parts[5]));
 
     document.title = parts[0] + " - Oald card";
 
     var rangeStr = '';
     if (document.getElementById('displayRange').checked) {
-        var r = document.getElementsByName('learnRange');
-        if (!r[0].checked) { // range
+        if (!chkLearnRange[0].checked) { // range
             var learnFrom = document.getElementById('learnFrom').value;
             var learnTo = document.getElementById('learnTo').value;
             rangeStr = ', [' + learnFrom + '-' + learnTo + ']';
@@ -252,6 +248,14 @@ function showCurrent() {
     document.getElementById('progress').innerHTML = (current + 1) + '\/' + entries.length + rangeStr;
 
     applyFontSizes();
+}
+
+function formatExamples(examples) {
+    var result = '';
+    if (examples.length > 0) {
+        result = "<ul><li>" + examples.replace(replaceToLiRe, "<li>") + "</ul>";
+    }
+    return result;
 }
 
 function styleTranscription(transcription) {

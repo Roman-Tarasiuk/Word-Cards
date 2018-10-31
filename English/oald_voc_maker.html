@@ -22,19 +22,27 @@
     <!-- Vocabulary maker -->
     <div class="voc-maker">
         <div style="margin: 0;">
-            <span class="title" style="color:#777">Format / Check:</span>
+            <span class="title" style="color:#777">Format / Check (use ' ### ' to split examples):</span>
             <br>
             <textarea id="txtInfo" class="convenientWidth" style="height:150px; font-family: times, serif; font-size: 20px;"></textarea>
 
             <button onclick="removeRedundantLineBreaks()"><img src="img/Adobe_Reader_v9.0_icon_small.png" /> Remove redundant line breaks</button>
             &nbsp;
 
-            <input type=button value="<exmpl>" onclick="surroundWithTag('exmpl')" class="tagButton">
-            <input type=button value="<exmpla>" onclick="surroundWithTag('exmpla')" class="tagButton">
-            <input type=button value="<phr>" onclick="surroundWithTag('phr')" class="tagButton">
-            <input type=button value="<i>" onclick="surroundWithTag('i')" class="tagButton" style="font-style: italic; color: #fff">
-            <input type=button value="<b>" onclick="surroundWithTag('b')" class="tagButton" style="font-weight: bold; color: #fff">
-            <input type=button value="<code>" onclick="surroundWithTag('code')" class="tagButton">
+            <input type=button value="<exmpl>" onclick="surroundWithTag('exmpl')" class="tagButton"
+                title="Example">
+            <input type=button value="<exmpl-lnk>" onclick="surroundWithTag('exmpl-lnk')" class="tagButton"
+                title="Another word card; use &lt;word-lnk&gt; to mark real linked word if exmple contains the word's form">
+            <input type=button value="<word-lnk>" onclick="surroundWithTag('word-lnk')" class="tagButton"
+                title="&lt;exmpl-lnk&gt;wordForm&lt;word-lnk&gt;wordInVocabulary&lt;/word-lnk&gt;&lt;/exmpl-lnk&gt;">
+            <input type=button value="<phr>" onclick="surroundWithTag('phr')" class="tagButton"
+                title="Phrase">
+            <input type=button value="<i>" onclick="surroundWithTag('i')" class="tagButton" style="font-style: italic; color: #fff"
+                title="Italic">
+            <input type=button value="<b>" onclick="surroundWithTag('b')" class="tagButton" style="font-weight: bold; color: #fff"
+                title="Bold">
+            <input type=button value="<code>" onclick="surroundWithTag('code')" class="tagButton"
+                title="Code">
             &nbsp;
 
             <input type=button value="Pick" onclick="pick()">

@@ -119,9 +119,9 @@ window.onbeforeunload = beforeUnload;
 
 var replaceToLiRe = new RegExp(" ### ", "g");
 var replaceNewLineRe = new RegExp("\n", "g");
-var replaceAllTagsRe = /<(\/?)(exmpl|exmpla|oald8|phr|i|b|code)>/g;
-var replaceAllTagsBackRe = /<(\/?)(?:_)(exmpl|exmpla|oald8|phr|i|b|code)>/g;
-var nonOALDTagsRe = /((<)(?!(?:\/*_exmpl|\/*_exmpla|\/*_oald8|\/*_phr|\/*_i|\/*_b|\/*_code)))(.*?)(>)/g;
+var replaceAllTagsRe = /<(\/?)(exmpl|exmpl-lnk|oald8|phr|i|b|code|word-lnk)>/g;
+var replaceAllTagsBackRe = /<(\/?)(?:_)(exmpl|exmpl-lnk|oald8|phr|i|b|code|word-lnk)>/g;
+var nonOALDTagsRe = /((<)(?!(?:\/*_exmpl|\/*_exmpl-lnk|\/*_oald8|\/*_phr|\/*_i|\/*_b|\/*_code|\/*_word-lnk)))(.*?)(>)/g;
 
 var oaldSeparator = ' – ';
 
@@ -147,10 +147,10 @@ function processOald() {
     text = '';
     for(var r in rows) {
         var examplesSeparatorPos = rows[r].indexOf(oaldSeparator);
-        examplesSeparatorPos = rows[r].indexOf(oaldSeparator, examplesSeparatorPos + 1);
-        examplesSeparatorPos = rows[r].indexOf(oaldSeparator, examplesSeparatorPos + 1);
-        examplesSeparatorPos = rows[r].indexOf(oaldSeparator, examplesSeparatorPos + 1);
-        examplesSeparatorPos = rows[r].indexOf(oaldSeparator, examplesSeparatorPos + 1);
+            examplesSeparatorPos = rows[r].indexOf(oaldSeparator, examplesSeparatorPos + 1);
+            examplesSeparatorPos = rows[r].indexOf(oaldSeparator, examplesSeparatorPos + 1);
+            examplesSeparatorPos = rows[r].indexOf(oaldSeparator, examplesSeparatorPos + 1);
+            examplesSeparatorPos = rows[r].indexOf(oaldSeparator, examplesSeparatorPos + 1);
         var audioSeparatorPos = rows[r].indexOf(oaldSeparator, examplesSeparatorPos + 1);
 
         if(examplesSeparatorPos > -1) {
@@ -167,6 +167,8 @@ function processOald() {
     document.getElementById("oald").innerHTML = text;
 }
 
+// #txtInfo content changed.
+
 $('#txtInfo').bind('input propertychange', processOald);
 
 function surroundWithTag(tag) {
@@ -178,20 +180,24 @@ function surroundWithTag(tag) {
 
     var startPos = textComponent.selectionStart;
     var endPos = textComponent.selectionEnd;
+    
+    var selectedText = '';
+    
     if(startPos != endPos) {
-        var selectedText = textComponent.value.substring(startPos, endPos);
-        var resultText = textComponent.value.substring(0, startPos)
-                        + '<' + tag + '>'
-                        + selectedText
-                        + '</' + tag + '>'
-                        + textComponent.value.substring(endPos, textComponent.value.length);
-
-        textComponent.value = resultText;
-        processOald();
-        textComponent.select();
-        textComponent.selectionStart = startPos + tag.length + 2;
-        textComponent.selectionEnd = textComponent.selectionStart + selectedText.length;
+        selectedText = textComponent.value.substring(startPos, endPos);
     }
+
+    var resultText = textComponent.value.substring(0, startPos)
+                    + '<' + tag + '>'
+                    + selectedText
+                    + '</' + tag + '>'
+                    + textComponent.value.substring(endPos, textComponent.value.length);
+
+    textComponent.value = resultText;
+    processOald();
+    textComponent.select();
+    textComponent.selectionStart = startPos + tag.length + 2;
+    textComponent.selectionEnd = textComponent.selectionStart + selectedText.length;
 }
 
 function removeRedundantLineBreaks() {
