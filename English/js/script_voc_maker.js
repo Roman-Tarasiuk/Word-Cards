@@ -83,7 +83,6 @@ tripleClick('txtInfo',
 
 $("#txtInfo").resizable({
     resize: setSrchResultsWidth
-    //alsoResize: "#oald, hr"
 });
 
 function setSrchResultsWidth() {
@@ -99,20 +98,6 @@ function beforeUnload()
     if(document.getElementById("temporaryStorage").value != '') {
         return "Є незбережені дані. Ви дійсно хочете вийти?";
     }
-    /* Doesn't work
-    if(!window.confirm) {
-        return "Mozilla. Є незбережені дані. Ви дійсно хочете вийти?";
-    }
-    else {
-        var ask = window.confirm("Internet Explorer. Є незбережені дані. Ви дійсно хочете вийти?");
-        if(ask) {
-            return "QWE";
-        }
-        else {
-            window.close();
-        }
-    }
-    //*/
 }
 
 window.onbeforeunload = beforeUnload;
@@ -309,7 +294,6 @@ function appendExample() {
             document.getElementById("temporaryStorage").value += '\n' + document.getElementById("txtInfo").value;
         }
         txtInfoCtrl.value = '';
-        //processOald();
         processChangesManually();
 
         var temporaryStorageComponent = document.getElementById("temporaryStorage");

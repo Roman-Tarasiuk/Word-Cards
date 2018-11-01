@@ -68,8 +68,6 @@ function moveRight() {
 }
 
 function nextWord() {
-    // wordsHistory = [];
-
     autoplayOff();
     audios = null;
 
@@ -302,13 +300,11 @@ function formatExamples(examples) {
 }
 
 function getLinkedWords(examples) {
-    //var splitted = examples.split(exampleSplitter);
     linkedWords = [];
     linkedText = [];
 
     var match;
 
-    //for (var i = 0; i < splitted.length; i++) {
     seeRe.lastIndex = 0;
     exmplLnkRe.lastIndex = 0;
     wordLnkRe.lastIndex = 0;
@@ -329,7 +325,6 @@ function getLinkedWords(examples) {
             linkedText.push('');
         }
     }
-    //}
 
     var infoStr = '** Linked Words: ' + (linkedWords.length == 0 ? '-' : '');
     for (var i = 0; i < linkedWords.length; i++) {
@@ -461,11 +456,9 @@ function initAutoplay() {
 
 function autoplayOff() {
     if (typeof audios == 'undefined' || audios == null) {
-        //console.log("Exit autoplayOff(). (01)");
         return;
     }
     if (functions == null) {
-        //console.log("Exit autoplayOff(). (02)");
         return;
     }
 
