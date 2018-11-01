@@ -26,19 +26,20 @@
             <p id="translation"></p>
             <hr>
             <p id="examples"></p>
-            <p class="progress2" onclick='$("#goTo").toggle()'>
+            <button id="btnBack" class="back-btn" onclick='goBack()' title="Back" disabled></button>
+            <div class="progress2" onclick='$("#goTo").toggle()'>
                 <span id="progress">.../...</span>
-                <p id='goTo'>
+                <br>
+                <div id='goTo' onclick="(function(ev) {ev.stopPropagation()})(event)">
                     <span>Go to <strong>word:</strong></span>
                     <input type=text id='goToWord' size='15'>
-                    <img src='img/delete48.png' onclick='clearAndFocus("goToWord", true)' />
+                    <img src='img/delete48.png' onclick='clearAndFocus("goToWord", true)'>
                     <span><strong>index:</strong></span>
                     <input type=text id='goToIndex' size='4'>
-                    <img src='img/delete48.png' onclick='clearAndFocus("goToIndex", true)' />
+                    <img src='img/delete48.png' onclick='clearAndFocus("goToIndex", true)'>
                     <input type=button value='Go to' onclick='goToWord()'>
-                    <input type=button value='Back' onclick='goBack()'>
-                </p>
-            </p>
+                </div>
+            </div>
         </div>
 
         <div id="settings">

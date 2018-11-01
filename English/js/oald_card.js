@@ -1,3 +1,30 @@
+
+// Parameters and variables.
+
+var entries = [],
+    currentIndex = 0,
+    splitterStr = " – ",
+    wordsIndex = [],
+    wordsHistory = [],
+    audios = null,
+    functions = null,
+    chkLearnRange = document.getElementsByName('learnRange'),
+    linkedWords = [],
+    linkedText = []
+    lastSelectedWord = '';
+    
+var exampleSplitter = ' ### ';
+var replaceToLiRe = new RegExp(exampleSplitter, 'g');
+var seeRe = /^see '(.*)'$/g;
+var exmplLnkRe = /<exmpl-lnk>(.*?)<\/exmpl-lnk>/g;
+var wordLnkRe = /(.*?)<word-lnk>(.*?)<\/word-lnk>/g;
+
+// Initialization.
+
+init();
+
+//
+
 function clearAndFocus(id, focus) {
     var inputCtrl = document.getElementById(id);
    
@@ -6,18 +33,6 @@ function clearAndFocus(id, focus) {
         inputCtrl.focus();
     }
 }
-var entries,
-    current = 0,
-    splitterStr = " – ",
-    wordsIndex = [],
-    wordsHistory = [],
-    audios = null,
-    functions = null,
-    chkLearnRange = document.getElementsByName('learnRange');
-    
-var replaceToLiRe = / ### /g;
-
-init();
 
 function toggleSettings() {
     $('#settings').toggle();
@@ -41,7 +56,11 @@ function autoplay() {
 function moveRight() {
     incrementCurrent();
 
-    wordsHistory = [];
+    nextWord();
+}
+
+function nextWord() {
+    // wordsHistory = [];
 
     autoplayOff();
     audios = null;
@@ -50,17 +69,17 @@ function moveRight() {
 }
 
 function incrementCurrent() {
-    current++;
+    currentIndex++;
     if (chkLearnRange[0].checked) { // all
-        if (current == entries.length) {
-            current = 0;
+        if (currentIndex == entries.length) {
+            currentIndex = 0;
         }
     }
     else { // range
         var learnFrom = document.getElementById('learnFrom').value;
         var learnTo = document.getElementById('learnTo').value;
-        if ((current + 1) > learnTo) {
-            current = learnFrom - 1;
+        if ((currentIndex + 1) > learnTo) {
+            currentIndex = learnFrom - 1;
         }
     }
 }
@@ -68,26 +87,21 @@ function incrementCurrent() {
 function moveLeft() {
     decrementCurrent();
 
-    wordsHistory = [];
-
-    autoplayOff();
-    audios = null;
-
-    showCurrent();
+    nextWord();
 }
 
 function decrementCurrent() {
-    current--;
+    currentIndex--;
     if (chkLearnRange[0].checked) { // all
-        if (current == -1) {
-            current = entries.length - 1;
+        if (currentIndex == -1) {
+            currentIndex = entries.length - 1;
         }
     }
     else { // range
         var learnFrom = document.getElementById('learnFrom').value;
         var learnTo = document.getElementById('learnTo').value;
-        if ((current + 1) < learnFrom) {
-            current = learnTo - 1;
+        if ((currentIndex + 1) < learnFrom) {
+            currentIndex = learnTo - 1;
         }
     }
 }
@@ -99,12 +113,12 @@ function checkRange() {
     else { // range
         var learnFrom = document.getElementById('learnFrom').value;
         var learnTo = document.getElementById('learnTo').value;
-        if ((current + 1) < learnFrom) {
-            current = learnTo - 1;
+        if ((currentIndex + 1) < learnFrom) {
+            currentIndex = learnTo - 1;
         }
-        else if ((current + 1) > learnTo) {
-            if (current != (entries.length - 1)) {
-                current = learnFrom - 1;
+        else if ((currentIndex + 1) > learnTo) {
+            if (currentIndex != (entries.length - 1)) {
+                currentIndex = learnFrom - 1;
             }
         }
     }
@@ -115,32 +129,32 @@ function goToWord() {
     var index = wordsIndex.indexOf(word);
     if (index < 0) {
         if (word == '') {
-            index = parseInt(document.getElementById('goToIndex').value);
+            var indexValue = document.getElementById('goToIndex').value;
+            index = parseInt(indexValue) - 1;
             if (!isNaN(index)) {
-                if (index > entries.length) {
+                if (index >= entries.length) {
                     index = entries.length - 1;
                 }
-                else if (index < 1) {
+                else if (index <= 0) {
                     index = 0;
                 }
-                else {
-                    index--;
-                }
-                document.getElementById('goToIndex').value = index + 1;
             }
             else {
-                console.log('isNaN');
+                console.log('Incorrect word index number: \'' + indexValue + '\'.');
+                return;
             }
         }
         else {
-            console.log('<0');
+            console.log('The word \'' + word + '\' not found.');
             return;
         }
     }
 
-    wordsHistory[wordsHistory.length] = current;
+    wordsHistory.push(currentIndex);
+    
+    $( "#btnBack" ).prop("disabled", false);
 
-    current = index;
+    currentIndex = index;
 
     autoplayOff();
     audios = null;
@@ -153,12 +167,17 @@ function goBack() {
         return;
     }
 
-    current = wordsHistory.pop();
+    currentIndex = wordsHistory.pop();
+    
+    if (wordsHistory.length == 0) {
+        $( "#btnBack" ).prop("disabled", true);
+    }
 
     autoplayOff();
     audios = null;
 
     showCurrent();
+    lastSelectedWord = '';
 }
 
 function init() {
@@ -168,14 +187,14 @@ function init() {
 
     entriesCount();
 
-    current = 0;
+    currentIndex = 0;
     checkRange();
 
     functions = null;
     audios = null;
 
     showCurrent();
-};
+}
 
 function entriesCount() {
     var text = $("#vocabulary").val();
@@ -209,11 +228,11 @@ function entriesCount() {
 }
 
 function showCurrent() {
-    if (entries[current] == "") {
+    if (entries[currentIndex] == "") {
         return;
     }
 
-    var currentEntry = entries[current];
+    var currentEntry = entries[currentIndex];
     var parts = currentEntry.split(splitterStr);
 
     $("#word").html(parts[0]);
@@ -230,6 +249,8 @@ function showCurrent() {
 
     $("#translation").html(parts[4]);
     $("#examples").html(formatExamples(parts[5]));
+    
+    getLinkedWords(parts[5]);
 
     document.title = parts[0] + " - Oald card";
 
@@ -245,7 +266,7 @@ function showCurrent() {
         }
     }
     
-    document.getElementById('progress').innerHTML = (current + 1) + '\/' + entries.length + rangeStr;
+    document.getElementById('progress').innerHTML = (currentIndex + 1) + '\/' + entries.length + rangeStr;
 
     applyFontSizes();
 }
@@ -256,6 +277,43 @@ function formatExamples(examples) {
         result = "<ul><li>" + examples.replace(replaceToLiRe, "<li>") + "</ul>";
     }
     return result;
+}
+
+function getLinkedWords(examples) {
+    var splitted = examples.split(exampleSplitter);
+    linkedWords = [];
+    linkedText = [];
+    
+    var match;
+    
+    for (var i = 0; i < splitted.length; i++) {
+        seeRe.lastIndex = 0;
+        exmplLnkRe.lastIndex = 0;
+        wordLnkRe.lastIndex = 0;
+        
+        while ((match = seeRe.exec(splitted[i])) != null) {
+            linkedWords.push(match[1]);
+            linkedText.push('');
+        }
+        
+        while((match = exmplLnkRe.exec(splitted[i])) != null) {
+            var tmp = wordLnkRe.exec(match[1]);
+            if (tmp != null) {                
+                linkedWords.push(tmp[2]);
+                linkedText.push(tmp[1]);
+            }
+            else {
+                linkedWords.push(match[1]);
+                linkedText.push('');
+            }
+        }
+    }
+    
+    var infoStr = '** Linked Words: ' + (linkedWords.length == 0 ? '-' : '');
+    for (var i = 0; i < linkedWords.length; i++) {
+        infoStr += '\'' + linkedWords[i] + '\'' + (i < linkedWords.length - 1 ? ', ' : '');
+    }
+    console.log(infoStr);
 }
 
 function styleTranscription(transcription) {
@@ -408,7 +466,7 @@ function openFile(event) {
     };
 
     reader.readAsText(input.files[0]);
-};
+}
 
 function applyFontSizes() {
     function scaleFont(element, defaultSize, scale) {
@@ -454,3 +512,35 @@ function applyFontSizes() {
     scaleFont(document.getElementById('goToWord'), 16, scale);
     scaleFont(document.getElementById('goToIndex'), 16, scale);
 }
+
+document.addEventListener("selectionchange", function() {
+    var selection = window.getSelection();
+    var selectionText = selection.toString();
+    
+    var exitReason = '';
+        
+    var linkedTextIndex = linkedText.indexOf(selectionText);
+    var linkedWordsIndex = linkedWords.indexOf(selectionText);
+    
+    if (selectionText == '') {
+        exitReason = 'Empty selection';
+    }
+    else if (linkedTextIndex < 0 && linkedWordsIndex < 0) {
+        exitReason = 'Selection not found';
+    }
+    else if (linkedTextIndex >= 0 && linkedWordsIndex < 0) {
+        selectionText = linkedWords[linkedTextIndex];
+    }
+    else if (lastSelectedWord == selectionText) {
+        exitReason = 'Selection processed';
+    }
+    
+    if (exitReason != '') {
+        console.log('** Processing selection: ' + exitReason + '. Exit.');
+        return;
+    }
+    
+    lastSelectedWord = selectionText;
+    document.getElementById('goToWord').value = lastSelectedWord;
+    goToWord();
+});

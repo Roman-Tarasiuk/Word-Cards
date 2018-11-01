@@ -37,7 +37,7 @@ html, body {
 
 .info {
     width: calc(100% - 100px); /* Navigation panes and padding */
-    min-height: calc(100vh - 20px);
+    min-height: calc(100vh);
     /* background-color: #ff9; */
     /* background-color: #f2f2f2; */
     background-color: #e6ffe6;
@@ -207,6 +207,12 @@ hr {
     text-decoration: underline;
 }
 
+#goTo {
+    display: inline;
+    float: left;
+    margin-left: 30px;
+}
+
 #goToWord {
     font-size: 16pt;
 }
@@ -272,5 +278,21 @@ phr {
 }
 
 word-lnk {
+    display: none;
+}
+
+.back-btn {
+    background-image: url("../img/back-btn.png");
+    background-color: rgb(230, 255, 230);
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 48px;
+    height: 48px;
+    border: 0;
+    float: left
+}
+
+.back-btn:disabled {
+    /* background-image: url("../img/back-btn-disabled.png"); */
     display: none;
 }
