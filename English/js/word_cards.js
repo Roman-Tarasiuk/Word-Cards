@@ -1,9 +1,15 @@
 
-// Parameters and variables.
+// Script Parameters.
+
+const splitterStr = " – ",
+      exampleSplitter = ' ### ',
+      processSelection = false;
+
+
+//  Variables.
 
 var entries = [],
     currentIndex = 0,
-    splitterStr = " – ",
     wordsIndex = [],
     wordsHistory = [],
     audios = null,
@@ -11,23 +17,25 @@ var entries = [],
     chkLearnRange = document.getElementsByName('learnRange'),
     linkedWords = [],
     linkedText = []
-    lastSelectedWord = '';
-    
-var exampleSplitter = ' ### ';
-var replaceToLiRe = new RegExp(exampleSplitter, 'g');
-var seeRe = /^see '(.*)'$/g;
-var exmplLnkRe = /<exmpl-lnk>(.*?)<\/exmpl-lnk>/g;
-var wordLnkRe = /(.*?)<word-lnk>(.*?)<\/word-lnk>/g;
+    lastSelectedWord = '',
+    replaceToLiRe = new RegExp(exampleSplitter, 'g'),
+    seeRe = /<see>(.*?)<\/see>/g,
+    see2Re = /(<see>.*?<\/see>)/g,
+    exmplLnkRe = /<exmpl-lnk>(.*?)<\/exmpl-lnk>/g,
+    exmplLnk2Re = /(<exmpl-lnk>.*?<\/exmpl-lnk>)/g,
+    wordLnkRe = /(.*?)<word-lnk>(.*?)<\/word-lnk>/g;
+
 
 // Initialization.
 
 init();
 
-//
+
+// Functions.
 
 function clearAndFocus(id, focus) {
     var inputCtrl = document.getElementById(id);
-   
+
     inputCtrl.value="";
     if (focus) {
         inputCtrl.focus();
@@ -151,7 +159,7 @@ function goToWord() {
     }
 
     wordsHistory.push(currentIndex);
-    
+
     $( "#btnBack" ).prop("disabled", false);
 
     currentIndex = index;
@@ -168,7 +176,7 @@ function goBack() {
     }
 
     currentIndex = wordsHistory.pop();
-    
+
     if (wordsHistory.length == 0) {
         $( "#btnBack" ).prop("disabled", true);
     }
@@ -192,6 +200,15 @@ function init() {
 
     functions = null;
     audios = null;
+
+    if (processSelection) {
+        document.addEventListener("selectionchange", function() {
+            var selection = window.getSelection();
+            var selectionText = selection.toString();
+
+            processLinkWord(selectionText);
+        });
+    }
 
     showCurrent();
 }
@@ -235,6 +252,8 @@ function showCurrent() {
     var currentEntry = entries[currentIndex];
     var parts = currentEntry.split(splitterStr);
 
+    console.log('--\n** Current word: \'' + parts[0] + '\'');
+
     $("#word").html(parts[0]);
     $("#pos").html(parts[1]);
 
@@ -244,12 +263,11 @@ function showCurrent() {
     }
 
     $("#transcription").html(styleTranscription(parts[2]));
-    //$("#comment").html(parts[3] != "" ? parts[3] : "...");
     $("#comment").html(parts[3]);
 
     $("#translation").html(parts[4]);
     $("#examples").html(formatExamples(parts[5]));
-    
+
     getLinkedWords(parts[5]);
 
     document.title = parts[0] + " - Oald card";
@@ -265,7 +283,7 @@ function showCurrent() {
             rangeStr = ', *';
         }
     }
-    
+
     document.getElementById('progress').innerHTML = (currentIndex + 1) + '\/' + entries.length + rangeStr;
 
     applyFontSizes();
@@ -276,39 +294,43 @@ function formatExamples(examples) {
     if (examples.length > 0) {
         result = "<ul><li>" + examples.replace(replaceToLiRe, "<li>") + "</ul>";
     }
+
+    result = result.replace(exmplLnk2Re, '<special onclick="clickLnk(this)">$1</special>');
+    result = result.replace(see2Re, '<special onclick="clickLnk(this)">$1</special>');
+
     return result;
 }
 
 function getLinkedWords(examples) {
-    var splitted = examples.split(exampleSplitter);
+    //var splitted = examples.split(exampleSplitter);
     linkedWords = [];
     linkedText = [];
-    
+
     var match;
-    
-    for (var i = 0; i < splitted.length; i++) {
-        seeRe.lastIndex = 0;
-        exmplLnkRe.lastIndex = 0;
-        wordLnkRe.lastIndex = 0;
-        
-        while ((match = seeRe.exec(splitted[i])) != null) {
+
+    //for (var i = 0; i < splitted.length; i++) {
+    seeRe.lastIndex = 0;
+    exmplLnkRe.lastIndex = 0;
+    wordLnkRe.lastIndex = 0;
+
+    while ((match = seeRe.exec(examples)) != null) {
+        linkedWords.push(match[1]);
+        linkedText.push('');
+    }
+
+    while((match = exmplLnkRe.exec(examples)) != null) {
+        var tmp = wordLnkRe.exec(match[1]);
+        if (tmp != null) {
+            linkedWords.push(tmp[2]);
+            linkedText.push(tmp[1]);
+        }
+        else {
             linkedWords.push(match[1]);
             linkedText.push('');
         }
-        
-        while((match = exmplLnkRe.exec(splitted[i])) != null) {
-            var tmp = wordLnkRe.exec(match[1]);
-            if (tmp != null) {                
-                linkedWords.push(tmp[2]);
-                linkedText.push(tmp[1]);
-            }
-            else {
-                linkedWords.push(match[1]);
-                linkedText.push('');
-            }
-        }
     }
-    
+    //}
+
     var infoStr = '** Linked Words: ' + (linkedWords.length == 0 ? '-' : '');
     for (var i = 0; i < linkedWords.length; i++) {
         infoStr += '\'' + linkedWords[i] + '\'' + (i < linkedWords.length - 1 ? ', ' : '');
@@ -508,39 +530,40 @@ function applyFontSizes() {
     for (var i = 0; i < spans.length; i++) {
         scaleFont(spans[i], 16, scale);
     }
-    
+
     scaleFont(document.getElementById('goToWord'), 16, scale);
     scaleFont(document.getElementById('goToIndex'), 16, scale);
 }
 
-document.addEventListener("selectionchange", function() {
-    var selection = window.getSelection();
-    var selectionText = selection.toString();
-    
+function processLinkWord(word) {
     var exitReason = '';
-        
-    var linkedTextIndex = linkedText.indexOf(selectionText);
-    var linkedWordsIndex = linkedWords.indexOf(selectionText);
-    
-    if (selectionText == '') {
-        exitReason = 'Empty selection';
+
+    var linkedTextIndex = linkedText.indexOf(word);
+    var linkedWordsIndex = linkedWords.indexOf(word);
+
+    if (word == '') {
+        exitReason = 'Empty word';
     }
     else if (linkedTextIndex < 0 && linkedWordsIndex < 0) {
-        exitReason = 'Selection not found';
+        exitReason = 'Word not found';
     }
     else if (linkedTextIndex >= 0 && linkedWordsIndex < 0) {
-        selectionText = linkedWords[linkedTextIndex];
+        word = linkedWords[linkedTextIndex];
     }
-    else if (lastSelectedWord == selectionText) {
-        exitReason = 'Selection processed';
+    else if (lastSelectedWord == word) {
+        exitReason = 'Word processed';
     }
-    
+
     if (exitReason != '') {
-        console.log('** Processing selection: ' + exitReason + '. Exit.');
+        console.log('** Processing word: ' + exitReason + '. Exit.');
         return;
     }
-    
-    lastSelectedWord = selectionText;
+
+    lastSelectedWord = word;
     document.getElementById('goToWord').value = lastSelectedWord;
     goToWord();
-});
+}
+
+function clickLnk(w) {
+    processLinkWord(w.innerText);
+}

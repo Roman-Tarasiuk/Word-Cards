@@ -296,3 +296,11 @@ word-lnk {
     /* background-image: url("../img/back-btn-disabled.png"); */
     display: none;
 }
+
+see::before {
+    content: "see '";
+}
+
+see::after {
+    content: "'";
+}

@@ -119,9 +119,9 @@ window.onbeforeunload = beforeUnload;
 
 var replaceToLiRe = new RegExp(" ### ", "g");
 var replaceNewLineRe = new RegExp("\n", "g");
-var replaceAllTagsRe = /<(\/?)(exmpl|exmpl-lnk|oald8|phr|i|b|code|word-lnk)>/g;
-var replaceAllTagsBackRe = /<(\/?)(?:_)(exmpl|exmpl-lnk|oald8|phr|i|b|code|word-lnk)>/g;
-var nonOALDTagsRe = /((<)(?!(?:\/*_exmpl|\/*_exmpl-lnk|\/*_oald8|\/*_phr|\/*_i|\/*_b|\/*_code|\/*_word-lnk)))(.*?)(>)/g;
+var replaceAllTagsRe = /<(\/?)(exmpl|exmpl-lnk|oald8|phr|i|b|code|word-lnk|see)>/g;
+var replaceAllTagsBackRe = /<(\/?)(?:_)(exmpl|exmpl-lnk|oald8|phr|i|b|code|word-lnk|see)>/g;
+var nonOALDTagsRe = /((<)(?!(?:\/*_exmpl|\/*_exmpl-lnk|\/*_oald8|\/*_phr|\/*_i|\/*_b|\/*_code|\/*_word-lnk|\/*_see)))(.*?)(>)/g;
 
 var oaldSeparator = ' – ';
 
