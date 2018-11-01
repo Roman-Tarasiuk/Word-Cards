@@ -1,4 +1,4 @@
-# OALD-Card
+# Word Cards
 
 В каталозі English створити каталог Audio з 2 підкаталогами - Ogg і Mp3
 
