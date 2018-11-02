@@ -164,7 +164,8 @@ function goToWord() {
 
     wordsHistory.push(currentIndex);
 
-    $( "#btnBack" ).prop("disabled", false);
+    $("#btnBack").prop("disabled", false);
+	$("#clrHist").prop("disabled", false);
 
     currentIndex = index;
 
@@ -182,7 +183,8 @@ function goBack() {
     currentIndex = wordsHistory.pop();
 
     if (wordsHistory.length == 0) {
-        $( "#btnBack" ).prop("disabled", true);
+        $("#btnBack").prop("disabled", true);
+		$("#clrHist").prop("disabled", true);
     }
 
     autoplayOff();
@@ -417,7 +419,7 @@ function makeAudioHTML(txt) {
         audioLinksHTML += span + '\n';
     }
 
-    audioLinksHTML += '<span id="playAll" onclick=autoplay()>Play all <img src="img/play-all-normal.png"></span>';
+    audioLinksHTML += '<span id="playAll" onclick=autoplay(true)>Play all <img src="img/play-all-normal.png"></span>';
 
     $("#audioLinks").html(audioLinksHTML);
 }
@@ -578,6 +580,7 @@ function clickLnk(w) {
 }
 
 function clearHistory() {
-	$( "#btnBack" ).prop("disabled", true);
+	$("#btnBack").prop("disabled", true);
+	$("#clrHist").prop("disabled", true);
 	wordsHistory = [];
 }

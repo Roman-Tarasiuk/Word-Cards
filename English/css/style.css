@@ -281,20 +281,26 @@ word-lnk {
     display: none;
 }
 
-.back-btn {
-    background-image: url("../img/back-btn.png");
+.image-btn {
     background-color: rgb(230, 255, 230);
     background-repeat: no-repeat;
     background-size: contain;
     width: 48px;
     height: 48px;
     border: 0;
-    float: left
+    /*float: left*/
 }
 
-.back-btn:disabled {
-    /* background-image: url("../img/back-btn-disabled.png"); */
+.image-btn:disabled {
     display: none;
+}
+
+.back-btn {
+    background-image: url("../img/back-btn.png");
+}
+
+.clear-btn {
+	background-image: url("../img/delete48.png");
 }
 
 see::before {
