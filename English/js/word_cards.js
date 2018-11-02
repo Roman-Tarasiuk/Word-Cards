@@ -576,3 +576,8 @@ function processLinkWord(word) {
 function clickLnk(w) {
     processLinkWord(w.innerText);
 }
+
+function clearHistory() {
+	$( "#btnBack" ).prop("disabled", true);
+	wordsHistory = [];
+}
