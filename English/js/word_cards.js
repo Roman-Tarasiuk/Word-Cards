@@ -23,7 +23,8 @@ var entries = [],
     see2Re = /(<see>.*?<\/see>)/g,
     exmplLnkRe = /<exmpl-lnk>(.*?)<\/exmpl-lnk>/g,
     exmplLnk2Re = /(<exmpl-lnk>.*?<\/exmpl-lnk>)/g,
-    wordLnkRe = /(.*?)<word-lnk>(.*?)<\/word-lnk>/g;
+    wordLnkRe = /(.*?)<word-lnk>(.*?)<\/word-lnk>/g,
+	isFullScreen = false;
 
 
 // Initialization.
@@ -583,4 +584,40 @@ function clearHistory() {
 	$("#btnBack").prop("disabled", true);
 	$("#clrHist").prop("disabled", true);
 	wordsHistory = [];
+}
+
+function toggleFullscreen() {
+	if (!isFullScreen) {
+		openFullscreen();
+		isFullScreen = true;
+	}
+	else {
+		closeFullscreen();
+		isFullScreen = false;
+	}
+}
+
+function openFullscreen() {
+  var elem = document.documentElement;
+  if (elem.requestFullscreen) {
+    elem.requestFullscreen();
+  } else if (elem.mozRequestFullScreen) { /* Firefox */
+    elem.mozRequestFullScreen();
+  } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+    elem.webkitRequestFullscreen();
+  } else if (elem.msRequestFullscreen) { /* IE/Edge */
+    elem.msRequestFullscreen();
+  }
+}
+
+function closeFullscreen() {
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if (document.mozCancelFullScreen) {
+    document.mozCancelFullScreen();
+  } else if (document.webkitExitFullscreen) {
+    document.webkitExitFullscreen();
+  } else if (document.msExitFullscreen) {
+    document.msExitFullscreen();
+  }
 }

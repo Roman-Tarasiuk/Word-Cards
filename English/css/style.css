@@ -303,6 +303,13 @@ word-lnk {
 	background-image: url("../img/delete48.png");
 }
 
+.fullscreen-btn {
+	background-image: url("../img/fullscreen_grey_48x48.png");
+	position: fixed;
+    bottom: 20px;
+	right: 20px;
+}
+
 see::before {
     content: "see '";
 }
