@@ -54,10 +54,16 @@ function play(index) {
     audios[index].play();
 }
 
-function autoplay() {
-    initAutoplay();
+function autoplay(playAudio) {
+    initAutoplay(playAudio);
     if (audios != null) {
-        audios[0].play();
+		if (playAudio) {
+			audios[0].play();
+		}
+		else {
+			var event = new Event('ended');
+			audios[0].dispatchEvent(event);
+		}
     }
 }
 
@@ -182,7 +188,8 @@ function goBack() {
     autoplayOff();
     audios = null;
 
-    showCurrent();
+	var playHistory = document.getElementById('autoplayHistory').checked;
+    showCurrent(playHistory);
     lastSelectedWord = '';
 }
 
@@ -242,7 +249,7 @@ function entriesCount() {
     document.getElementById('entriesTotal').innerHTML = entries.length;
 }
 
-function showCurrent() {
+function showCurrent(playAudio) {
     if (entries[currentIndex] == "") {
         return;
     }
@@ -256,8 +263,11 @@ function showCurrent() {
     $("#pos").html(parts[1]);
 
     makeAudioHTML(parts[6]);
-    if (document.getElementById("autoplay").checked) {
-        autoplay();
+	if (playAudio != undefined && playAudio == false) {
+		autoplay(false);
+	}
+    else {
+        autoplay(document.getElementById("autoplay").checked);
     }
 
     $("#transcription").html(styleTranscription(parts[2]));
@@ -412,7 +422,7 @@ function makeAudioHTML(txt) {
     $("#audioLinks").html(audioLinksHTML);
 }
 
-function initAutoplay() {
+function initAutoplay(playAudio) {
     console.log('initAutoplay()...');
 
     if (typeof audios == 'undefined' || audios == null) {
@@ -432,7 +442,13 @@ function initAutoplay() {
             span.style.visibility = 'visible';
 
             var element = document.getElementById('audio' + (i + 1));
-            element.play();
+			if (playAudio) {
+				element.play();
+			}
+			else {
+				var event = new Event('ended');
+				element.dispatchEvent(event);
+			}
         };
     }
 
