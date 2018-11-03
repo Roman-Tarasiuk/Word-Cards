@@ -26,19 +26,19 @@
             <p id="translation"></p>
             <hr>
             <p id="examples"></p>
-            <button id="btnBack" class="image-btn back-btn" onclick='goBack()' title="Back" disabled></button>
-			<button id="clrHist" class="image-btn clear-btn" onclick='clearHistory()' title="Clear History" disabled style="margin-left: 20px;"></button>
-            <div class="progress2" onclick='$("#goTo").toggle()'>
+            <button id="btnBack" class="image-btn back-btn" onclick="goBack()" title="Back" disabled></button>
+			<button id="clrHist" class="image-btn clear-btn" onclick="clearHistory()" title="Clear History" disabled style="margin-left: 20px;"></button>
+            <div class="progress2" onclick="$('#goTo').toggle()">
                 <span id="progress">.../...</span>
                 <br>
-                <div id='goTo' onclick="(function(ev) {ev.stopPropagation()})(event)">
+                <div id="goTo" onclick="(function(ev) {ev.stopPropagation()})(event)">
                     <span>Go to <strong>word:</strong></span>
-                    <input type=text id='goToWord' size='15'>
-					<button class="image-btn clear-btn" onclick='clearAndFocus("goToWord", true)'></button>
+                    <input type=text id="goToWord" size="15">
+					<button class="image-btn clear-btn" onclick="clearAndFocus('goToWord', false);"></button>
                     <span><strong>index:</strong></span>
-                    <input type=number id='goToIndex' size='4' style="width: 120px;">
-					<button class="image-btn clear-btn" onclick='clearAndFocus("goToIndex", true)'></button>
-                    <input type=button value='Go to' onclick='goToWord()'>
+                    <input type=number id="goToIndex" size="4" style="width: 120px;">
+					<button class="image-btn clear-btn" onclick="clearAndFocus('goToIndex', false);"></button>
+                    <input type=button value="Go to" onclick="goToWord()">
                 </div>
             </div>
         </div>
@@ -53,30 +53,30 @@
 			<span><input type=checkbox id="autoplayHistory"> Autoplay History</span>
             <br>
             <p>Vocabulary (paste from clipboard or select file):
-                <input type=file accept='text/plain' onchange='openFile(event)' style='padding: 10px;'>
-                <input type=button value='Clear vocabulary' onclick='document.getElementById("vocabulary").value=""' style='padding: 10px;'>
+                <input type=file accept="text/plain" onchange="openFile(event)" style="padding: 10px;">
+                <input type=button value="Clear vocabulary" onclick="document.getElementById('vocabulary').value=''" style="padding: 10px;">
             </p>
-            <textarea id="vocabulary" style='margin-top: 5px;' onchange='entriesCount()'></textarea>
+            <textarea id="vocabulary" style="margin-top: 5px;" onchange="entriesCount()"></textarea>
             <br>
             <p>
-                Words loaded: <span id='entriesTotal' style='vertical-align: middle;'>...</span>
+                Words loaded: <span id="entriesTotal" style="vertical-align: middle;">...</span>
                 Words to learn:
                     <input type=radio name="learnRange" value="all" checked /> All
                     <input type=radio name="learnRange" value="range" /> Range
-                        from <input type=text id='learnFrom' style='width: 80px;' />
-                        to <input type=text id='learnTo' style='width: 80px;' />
-                    <input type=checkbox id='displayRange' /> Display range
+                        from <input type=text id="learnFrom" style="width: 80px;" />
+                        to <input type=text id="learnTo" style="width: 80px;" />
+                    <input type=checkbox id="displayRange" /> Display range
             </p>
             <br>
             Text scale (0.1 – 5.0):
-            <input type=text id='scale' value='1'>
-            <input type=button value="Apply" onclick="init()" style='padding: 10px; margin-top: 5px;'></input>
+            <input type=text id="scale" value="1">
+            <input type=button value="Apply" onclick="init()" style="padding: 10px; margin-top: 5px;"></input>
         </div>
     </div>
 
     <div id="moveRight" class="navigate" onclick="moveRight()"></div>
 
-	<button id="btnFullScreen" class="image-btn fullscreen-btn" onclick='toggleFullscreen()' title="Back"></button>
+	<button id="btnFullScreen" class="image-btn fullscreen-btn" onclick="toggleFullscreen()" title="Back"></button>
     <!-- End of body elements -->
 
     <script src="js/jquery.min.js"></script>

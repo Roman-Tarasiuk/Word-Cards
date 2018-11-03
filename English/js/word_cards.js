@@ -246,7 +246,7 @@ function entriesCount() {
     wordsIndex = [];
     wordsHistory = [];
     for (var i = 0; i < entries.length; i++) {
-        wordsIndex[i] = entries[i].substring(0, entries[i].indexOf(splitterStr));
+        wordsIndex[i] = entries[i].substring(0, entries[i].indexOf(splitterStr)).toLowerCase();
     }
 
     document.getElementById('entriesTotal').innerHTML = entries.length;
