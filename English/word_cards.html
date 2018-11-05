@@ -7,6 +7,11 @@
 
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <style>
+    body {
+        background-color: #e6ffe6;
+    }
+    </style>
 </head>
 
 <body>
@@ -38,7 +43,7 @@
                     <span><strong>index:</strong></span>
                     <input type=number id="goToIndex" size="4" style="width: 120px;">
 					<button class="image-btn clear-btn" onclick="clearAndFocus('goToIndex', false);"></button>
-                    <input type=button value="Go to" onclick="goToWord()">
+                    <input type=button value="Go to" onclick="goToWord()" class="btn btn-primary">
                 </div>
             </div>
         </div>
@@ -72,6 +77,8 @@
             <input type=text id="scale" value="1">
             <input type=button value="Apply" onclick="applySettings()" class="btn btn-primary"></input>
             <input type=button value="Run" onclick="run()" class="btn btn-success"></input>
+            <br>
+            <button class="btn btn-warning" onclick="checkVocabulary()">Check vocabulary</button>
         </div>
     </div>
 

@@ -1,7 +1,7 @@
 
 // Script Parameters.
 
-const splitterStr = ' – ',
+const entrySplitter = ' – ',
       exampleSplitter = ' ### ',
       processSelection = false;
 
@@ -16,8 +16,8 @@ var entries = [],
     audios = null,
     functions = null,
     chkLearnRange = document.getElementsByName('learnRange'),
-    linkedWords = [],
-    linkedText = []
+    linkedWords = [], // <exmpl-lnk>theword</exmpl-lnk>
+    linkedText = [],  // <exmpl-lnk>wordform<word-lnk>theword</word-lnk></exmpl-lnk>
     lastSelectedWord = '',
     replaceToLiRe = new RegExp(exampleSplitter, 'g'),
     seeRe = /<see>(.*?)<\/see>/g,
@@ -45,8 +45,18 @@ function clearAndFocus(id, focus) {
 }
 
 function toggleSettings() {
-    $('#settings').toggle();
+    var settings = $('#settings');
+    settings.toggle();
     $('#wordCard').toggle();
+    
+    if (settings['0'].style.display != 'none') {
+        $('#moveLeft').css('visibility', 'hidden');
+        $('#moveRight').css('visibility', 'hidden');
+    }
+    else {
+        $('#moveLeft').css('visibility', 'visible');
+        $('#moveRight').css('visibility', 'visible');
+    }
 }
 
 function play(index) {
@@ -262,7 +272,7 @@ function setEntries() {
     wordsIndex = [];
     wordsHistory = [];
     for (var i = 0; i < entries.length; i++) {
-        wordsIndex[i] = entries[i].substring(0, entries[i].indexOf(splitterStr)).toLowerCase();
+        wordsIndex[i] = entries[i].substring(0, entries[i].indexOf(entrySplitter)).toLowerCase();
     }
 
     document.getElementById('entriesTotal').innerHTML = entries.length;
@@ -274,7 +284,7 @@ function showCurrent(playAudio) {
     }
 
     var currentEntry = entries[currentIndex];
-    var parts = currentEntry.split(splitterStr);
+    var parts = currentEntry.split(entrySplitter);
 
     console.log('--\n** Current word: \'' + parts[0] + '\'');
 
@@ -290,12 +300,25 @@ function showCurrent(playAudio) {
     }
 
     $('#transcription').html(styleTranscription(parts[2]));
-    $('#comment').html(parts[3]);
+    $('#comment').html(formatExamples(parts[3]));
+    
+    var linked = getAllLinkedWords(parts[3]);
+    linkedWords = linked.linkedWords;
+    linkedText = linked.linkedText;
 
     $('#translation').html(parts[4]);
     $('#examples').html(formatExamples(parts[5]));
 
-    getLinkedWords(parts[5]);
+    linked = getAllLinkedWords(parts[5]);
+    linkedWords = linkedWords.concat(linked.linkedWords);
+    linkedText = linkedText.concat(linked.linkedText);
+    
+    var infoStr = '** Linked Words: ' + (linkedWords.length == 0 ? '-' : '');
+    for (var i = 0; i < linkedWords.length; i++) {
+        infoStr += '\'' + linkedWords[i] + '\'' + (i < linkedWords.length - 1 ? ', ' : '');
+    }
+    console.log(infoStr);
+
 
     document.title = parts[0] + ' - Oald card';
 
@@ -326,20 +349,26 @@ function formatExamples(examples) {
     return result;
 }
 
-function getLinkedWords(examples) {
-    linkedWords = [];
-    linkedText = [];
-
+function getLinkedSee(examples) {
+    var linkedSee = [];
     var match;
 
     seeRe.lastIndex = 0;
-    exmplLnkRe.lastIndex = 0;
-    wordLnkRe.lastIndex = 0;
 
     while ((match = seeRe.exec(examples)) != null) {
-        linkedWords.push(match[1]);
-        linkedText.push('');
+        linkedSee.push(match[1]);
     }
+    
+    return linkedSee;
+}
+
+function getLinkedWords(examples) {
+    var linkedWords = [];
+    var linkedText = [];
+    var match;
+
+    exmplLnkRe.lastIndex = 0;
+    wordLnkRe.lastIndex = 0;
 
     while((match = exmplLnkRe.exec(examples)) != null) {
         var tmp = wordLnkRe.exec(match[1]);
@@ -352,12 +381,33 @@ function getLinkedWords(examples) {
             linkedText.push('');
         }
     }
-
-    var infoStr = '** Linked Words: ' + (linkedWords.length == 0 ? '-' : '');
-    for (var i = 0; i < linkedWords.length; i++) {
-        infoStr += '\'' + linkedWords[i] + '\'' + (i < linkedWords.length - 1 ? ', ' : '');
+    
+    return {
+        linkedWords: linkedWords,
+        linkedText: linkedText
     }
-    console.log(infoStr);
+}
+
+function getAllLinkedWords(examples) {
+    var linkedWords = [];
+    var linkedText = [];
+    
+    var see = getLinkedSee(examples);
+    
+    for (var i = 0; i < see.length; i++) {
+        linkedWords.push(see[i]);
+        linkedText.push('');
+    }
+    
+    var words = getLinkedWords(examples);
+    
+    linkedWords = linkedWords.concat(words.linkedWords);
+    linkedText = linkedText.concat(words.linkedText);
+    
+    return {
+        linkedWords: linkedWords,
+        linkedText: linkedText
+    }
 }
 
 function styleTranscription(transcription) {
@@ -634,4 +684,64 @@ function closeFullscreen() {
   } else if (document.msExitFullscreen) {
     document.msExitFullscreen();
   }
+}
+
+function checkVocabulary() {
+    function seeFound(see, word) {
+        var index = wordsIndex.indexOf(see);
+        if (index == -1) {
+            console.log('** Word \'' + see + '\' not found.');
+            return false;
+        }
+        
+        var entry = entries[index];
+        var parts = entry.split(entrySplitter);
+        
+        var found = false;
+        
+        exmplLnk2Re.lastIndex = 0;
+        var tmp;
+        
+        while(!found && (tmp = exmplLnk2Re.exec(parts[3])) != null) {
+            if (tmp.toString().indexOf(word) >= 0) {
+                found = true;
+            }
+        }
+        
+        exmplLnk2Re.lastIndex = 0;
+        while(!found && (tmp = exmplLnk2Re.exec(parts[5])) != null) {
+            if (tmp.toString().indexOf(word) >= 0) {
+                found = true;
+            }
+        }
+        
+        return found;
+    }
+    
+    //
+
+    var errorFound = false;
+
+    for (var i = 0; i < entries.length; i++) {
+        var tmp = entries[i].split(entrySplitter);
+        var word = tmp[0];
+        
+        var seeOk = true;
+        
+        var see = getLinkedSee(tmp[5]);
+        for (var j = 0; j < see.length; j++) {
+            seeOk = seeFound(see[j], word);
+            if (!seeOk) {
+                errorFound = true;
+                console.log('** Check: see\'' + see + '\' not found (' + tmp[0] + ').');
+            }
+        }
+    }
+    
+    if (errorFound) {
+        console.log('** Vocabulary has been checked with error(s).');
+    }
+    else {
+        console.log('** Vocabulary has been checked without error(s).');
+    }
 }

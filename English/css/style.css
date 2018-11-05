@@ -23,24 +23,17 @@ html, body {
 
 #moveLeft {
     background: url(../img/navigate_left_48.png) no-repeat center center;
-    /*background-color: #f2f2f2;*/
-    background-color: #e6ffe6;
 }
 
 #moveRight {
     margin-left: -20px;
     left: calc(100% - 30px);
     background: url(../img/navigate_right_48.png) no-repeat center center;
-    /*background-color: #f2f2f2;*/
-    background-color: #e6ffe6;
 }
 
 .info {
     width: calc(100% - 100px); /* Navigation panes and padding */
     min-height: calc(100vh);
-    /* background-color: #ff9; */
-    /* background-color: #f2f2f2; */
-    background-color: #e6ffe6;
     float: left;
     padding: 10px;
     position: relative;
