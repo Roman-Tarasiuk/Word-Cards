@@ -1,7 +1,7 @@
 
 // Script Parameters.
 
-const splitterStr = " – ",
+const splitterStr = ' – ',
       exampleSplitter = ' ### ',
       processSelection = false;
 
@@ -9,6 +9,7 @@ const splitterStr = " – ",
 //  Variables.
 
 var entries = [],
+    vocabularyChanged = true;
     currentIndex = 0,
     wordsIndex = [],
     wordsHistory = [],
@@ -29,7 +30,7 @@ var entries = [],
 
 // Initialization.
 
-init();
+run();
 
 
 // Functions.
@@ -37,7 +38,7 @@ init();
 function clearAndFocus(id, focus) {
     var inputCtrl = document.getElementById(id);
 
-    inputCtrl.value="";
+    inputCtrl.value='';
     if (focus) {
         inputCtrl.focus();
     }
@@ -46,8 +47,6 @@ function clearAndFocus(id, focus) {
 function toggleSettings() {
     $('#settings').toggle();
     $('#wordCard').toggle();
-    $("#goTo").toggle();
-    applyFontSizes();
 }
 
 function play(index) {
@@ -165,8 +164,8 @@ function goToWord() {
 
     wordsHistory.push(currentIndex);
 
-    $("#btnBack").prop("disabled", false);
-	$("#clrHist").prop("disabled", false);
+    $('#btnBack').prop('disabled', false);
+	$('#clrHist').prop('disabled', false);
 
     currentIndex = index;
 
@@ -184,8 +183,8 @@ function goBack() {
     currentIndex = wordsHistory.pop();
 
     if (wordsHistory.length == 0) {
-        $("#btnBack").prop("disabled", true);
-		$("#clrHist").prop("disabled", true);
+        $('#btnBack').prop('disabled', true);
+		$('#clrHist').prop('disabled', true);
     }
 
     autoplayOff();
@@ -196,12 +195,14 @@ function goBack() {
     lastSelectedWord = '';
 }
 
-function init() {
+function run() {
     $('#settings').toggle();
     $('#wordCard').toggle();
-    $("#goTo").toggle();
 
-    entriesCount();
+    if (vocabularyChanged) {
+        setEntries();
+        vocabularyChanged = false;
+    }
 
     currentIndex = 0;
     checkRange();
@@ -210,7 +211,7 @@ function init() {
     audios = null;
 
     if (processSelection) {
-        document.addEventListener("selectionchange", function() {
+        document.addEventListener('selectionchange', function() {
             var selection = window.getSelection();
             var selectionText = selection.toString();
 
@@ -221,19 +222,26 @@ function init() {
     showCurrent();
 }
 
-function entriesCount() {
-    var text = $("#vocabulary").val();
+function applySettings() {
+    applyFontSizes();
+    if (vocabularyChanged) {
+        setEntries();
+        vocabularyChanged = false;
+    }
+}
+
+function vocChanged() {
+    vocabularyChanged = true;
+}
+
+function setEntries() {
+    var text = $('#vocabulary').val();
 
     var emptyEntriesExist = false;
-    var tmp = text.split("\n");
+    var tmp = text.split('\n');
+
     for (var i = 0; i < tmp.length; i++) {
         if (tmp[i] == '') {
-            entries = [];
-            for (var i = 0; i < tmp.length; i++) {
-                if (tmp[i] != '') {
-                    entries[entries.length] = tmp[i];
-                }
-            }
             emptyEntriesExist = true;
             break;
         }
@@ -241,6 +249,14 @@ function entriesCount() {
 
     if (!emptyEntriesExist) {
         entries = tmp;
+    }
+    else {
+        entries = [];
+        for (var i = 0; i < tmp.length; i++) {
+            if (tmp[i] != '') {
+                entries.push(tmp[i]);
+            }
+        }
     }
 
     wordsIndex = [];
@@ -253,7 +269,7 @@ function entriesCount() {
 }
 
 function showCurrent(playAudio) {
-    if (entries[currentIndex] == "") {
+    if (entries[currentIndex] == '') {
         return;
     }
 
@@ -262,26 +278,26 @@ function showCurrent(playAudio) {
 
     console.log('--\n** Current word: \'' + parts[0] + '\'');
 
-    $("#word").html(parts[0]);
-    $("#pos").html(parts[1]);
+    $('#word').html(parts[0]);
+    $('#pos').html(parts[1]);
 
     makeAudioHTML(parts[6]);
 	if (playAudio != undefined && playAudio == false) {
 		autoplay(false);
 	}
     else {
-        autoplay(document.getElementById("autoplay").checked);
+        autoplay(document.getElementById('autoplay').checked);
     }
 
-    $("#transcription").html(styleTranscription(parts[2]));
-    $("#comment").html(parts[3]);
+    $('#transcription').html(styleTranscription(parts[2]));
+    $('#comment').html(parts[3]);
 
-    $("#translation").html(parts[4]);
-    $("#examples").html(formatExamples(parts[5]));
+    $('#translation').html(parts[4]);
+    $('#examples').html(formatExamples(parts[5]));
 
     getLinkedWords(parts[5]);
 
-    document.title = parts[0] + " - Oald card";
+    document.title = parts[0] + ' - Oald card';
 
     var rangeStr = '';
     if (document.getElementById('displayRange').checked) {
@@ -296,14 +312,12 @@ function showCurrent(playAudio) {
     }
 
     document.getElementById('progress').innerHTML = (currentIndex + 1) + '\/' + entries.length + rangeStr;
-
-    applyFontSizes();
 }
 
 function formatExamples(examples) {
     var result = '';
     if (examples.length > 0) {
-        result = "<ul><li>" + examples.replace(replaceToLiRe, "<li>") + "</ul>";
+        result = '<ul><li>' + examples.replace(replaceToLiRe, '<li>') + '</ul>';
     }
 
     result = result.replace(exmplLnk2Re, '<special onclick="clickLnk(this)">$1</special>');
@@ -348,8 +362,8 @@ function getLinkedWords(examples) {
 
 function styleTranscription(transcription) {
     var mapObj = {
-        BrE:"<span class='breLight'>BrE</span>",
-        NAmE:"<span class='nameLight'>NAmE</span>"
+        BrE:'<span class="breLight">BrE</span>',
+        NAmE:'<span class="nameLight">NAmE</span>'
     };
     return transcription.replace(/BrE|NAmE/g, function(matched){
         return mapObj[matched];
@@ -357,8 +371,8 @@ function styleTranscription(transcription) {
 }
 
 function makeAudioHTML(txt) {
-    if (txt == "" || typeof txt == 'undefined' || txt == null) {
-        $("#audioLinks").html('');
+    if (txt == '' || typeof txt == 'undefined' || txt == null) {
+        $('#audioLinks').html('');
         return;
     }
 
@@ -368,42 +382,42 @@ function makeAudioHTML(txt) {
 
     audios = [];
 
-    var bre = "BrE";
-    var name = "NAmE";
+    var bre = 'BrE';
+    var name = 'NAmE';
 
-    var parts = txt.split("; ");
+    var parts = txt.split('; ');
 
-    var audioLinksHTML = "";
+    var audioLinksHTML = '';
 
-    var audioAutoRunElem = $("#audioAutoRun");
-    audioAutoRunElem.html("");
+    var audioAutoRunElem = $('#audioAutoRun');
+    audioAutoRunElem.html('');
 
-    var path = $("#audioPath").val();
-    var isMp3 = document.getElementById("Mp3").checked;
+    var path = $('#audioPath').val();
+    var isMp3 = document.getElementById('Mp3').checked;
 
     var currentIndex;
 
     for (var i = 0; i < parts.length; i++) {
         if (isMp3) {
-            if (parts[i].toLowerCase().endsWith("ogg")) {
+            if (parts[i].toLowerCase().endsWith('ogg')) {
                 continue;
             }
         }
-        else { // "Ogg"
-            if (parts[i].toLowerCase().endsWith("mp3")) {
+        else { // 'Ogg'
+            if (parts[i].toLowerCase().endsWith('mp3')) {
                 continue;
             }
         }
 
         currentIndex = audios.length;
 
-        var audioStr = "<audio id=\"audio" + currentIndex + "\">";
-        audioStr += "<source src=\"" + path + parts[i].substring(parts[i].lastIndexOf('/') + 1)
-                    + "\" type=\"" + (isMp3 ? "audio/mpeg\">" : "audio/ogg\">") + "</audio>";
+        var audioStr = '<audio id=\"audio' + currentIndex + '\">';
+        audioStr += '<source src=\"' + path + parts[i].substring(parts[i].lastIndexOf('/') + 1)
+                    + '\" type=\"' + (isMp3 ? 'audio/mpeg\">' : 'audio/ogg\">') + '</audio>';
 
         audioAutoRunElem.append(audioStr);
 
-        audios[currentIndex] = document.getElementById("audio" + currentIndex);
+        audios[currentIndex] = document.getElementById('audio' + currentIndex);
 
         var span = '<span id="audioSpn' + currentIndex + '"'
                  + 'onclick="play(' + currentIndex + ')';
@@ -422,18 +436,18 @@ function makeAudioHTML(txt) {
 
     audioLinksHTML += '<span id="playAll" onclick=autoplay(true)>Play all <img src="img/play-all-normal.png"></span>';
 
-    $("#audioLinks").html(audioLinksHTML);
+    $('#audioLinks').html(audioLinksHTML);
 }
 
 function initAutoplay(playAudio) {
     console.log('initAutoplay()...');
 
     if (typeof audios == 'undefined' || audios == null) {
-        console.log("Exit initAutoplay(). (01)");
+        console.log('Exit initAutoplay(). (01)');
         return;
     }
     if (functions != null) {
-        console.log("Exit initAutoplay(). (02)");
+        console.log('Exit initAutoplay(). (02)');
         return;
     }
 
@@ -469,7 +483,7 @@ function initAutoplay(playAudio) {
         );
     }
 
-    document.getElementById("audioSpn0").style.visibility = 'visible';
+    document.getElementById('audioSpn0').style.visibility = 'visible';
     console.log('initAutoplay() end.')
 }
 
@@ -496,7 +510,7 @@ function openFile(event) {
     var reader = new FileReader();
     reader.onload = function(){
         document.getElementById('vocabulary').value = reader.result;
-        entriesCount();
+        setEntries();
     };
 
     reader.readAsText(input.files[0]);
@@ -505,7 +519,7 @@ function openFile(event) {
 function applyFontSizes() {
     function scaleFont(element, defaultSize, scale) {
         try {
-            element.style["font-size"] = defaultSize * scale + 'pt';
+            element.style['font-size'] = defaultSize * scale + 'pt';
         }
         catch (exception) {
             console.log('**applyFontSizes() exception...');
@@ -581,8 +595,8 @@ function clickLnk(w) {
 }
 
 function clearHistory() {
-	$("#btnBack").prop("disabled", true);
-	$("#clrHist").prop("disabled", true);
+	$('#btnBack').prop('disabled', true);
+	$('#clrHist').prop('disabled', true);
 	wordsHistory = [];
 }
 

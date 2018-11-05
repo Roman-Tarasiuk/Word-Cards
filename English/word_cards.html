@@ -31,7 +31,7 @@
             <div class="progress2" onclick="$('#goTo').toggle()">
                 <span id="progress">.../...</span>
                 <br>
-                <div id="goTo" onclick="(function(ev) {ev.stopPropagation()})(event)">
+                <div id="goTo" onclick="(function(ev) {ev.stopPropagation()})(event)" style="display: none;">
                     <span>Go to <strong>word:</strong></span>
                     <input type=text id="goToWord" size="15">
 					<button class="image-btn clear-btn" onclick="clearAndFocus('goToWord', false);"></button>
@@ -48,15 +48,15 @@
             <input type=text id="audioPath" value="Audio/Ogg/">
             <br>
             <span><input type=radio name="audioFormat" id="Ogg" checked> Ogg</span>
-            <span><input type=radio name="audioFormat" id="Mp3"> Mp3 (may not play on Android)</span>
+            <span><input type=radio name="audioFormat" id="Mp3"> Mp3 <span class="description">(may not play on Android)</span></span>
             <span><input type=checkbox id="autoplay" checked> Autoplay</span>
 			<span><input type=checkbox id="autoplayHistory"> Autoplay History</span>
             <br>
-            <p>Vocabulary (paste from clipboard or select file):
+            <p>Vocabulary: <span class="description">(paste from clipboard or select file)</span>
                 <input type=file accept="text/plain" onchange="openFile(event)" style="padding: 10px;">
-                <input type=button value="Clear vocabulary" onclick="document.getElementById('vocabulary').value=''" style="padding: 10px;">
+                <input type=button value="Clear vocabulary" onclick="document.getElementById('vocabulary').value=''" class="btn btn-warning">
             </p>
-            <textarea id="vocabulary" style="margin-top: 5px;" onchange="entriesCount()"></textarea>
+            <textarea id="vocabulary" style="margin-top: 5px;" onchange="vocChanged()" onkeypress="vocChanged()"></textarea>
             <br>
             <p>
                 Words loaded: <span id="entriesTotal" style="vertical-align: middle;">...</span>
@@ -70,7 +70,8 @@
             <br>
             Text scale (0.1 – 5.0):
             <input type=text id="scale" value="1">
-            <input type=button value="Apply" onclick="init()" style="padding: 10px; margin-top: 5px;"></input>
+            <input type=button value="Apply" onclick="applySettings()" class="btn btn-primary"></input>
+            <input type=button value="Run" onclick="run()" class="btn btn-success"></input>
         </div>
     </div>
 

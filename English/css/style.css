@@ -317,3 +317,8 @@ see::before {
 see::after {
     content: "'";
 }
+
+.description {
+    color: #777;
+    font-size: 1em !important;
+}
