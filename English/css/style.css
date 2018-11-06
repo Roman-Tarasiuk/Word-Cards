@@ -2,7 +2,6 @@
     margin: 0;
 }
 
-
 html, body {
     height: 100%;
 }
@@ -314,4 +313,12 @@ see::after {
 .description {
     color: #777;
     font-size: 1em !important;
+}
+
+.error-info {
+    display: none;
+}
+
+.error-info-text {
+    width: 100%;
 }
