@@ -351,8 +351,8 @@ function formatExamples(examples) {
         result = '<ul><li>' + examples.replace(replaceToLiRe, '<li>') + '</ul>';
     }
 
-    result = result.replace(exmplLnk2Re, '<special onclick="clickLnk(this)">$1</special>');
-    result = result.replace(see2Re, '<special onclick="clickLnk(this)">$1</special>');
+    result = result.replace(exmplLnk2Re, '<special onclick="clickLnk(this)" onmouseover="mouseover(this)">$1</special>');
+    result = result.replace(see2Re, '<special onclick="clickLnk(this)" onmouseover="mouseover(this)">$1</special>');
 
     return result;
 }
@@ -823,4 +823,30 @@ function hideErrorInfo() {
 
 function clearErrorInfo() {
     $('#errorInfoTextarea').text('');
+}
+
+function mouseover(el) {
+    if (!el.title) {
+        el.title = true;
+        
+        exmplLnkRe.lastIndex = 0;
+        var word = exmplLnkRe.exec(el.innerHTML);
+        
+        if (word != null) {
+            word = word[1].toLowerCase();
+            wordLnkRe.lastIndex = 0;
+            var tmp = wordLnkRe.exec(word);
+            
+            if (tmp != null) {
+                word = tmp[1].toLowerCase();
+            }
+        }
+        else {
+            seeRe.lastIndex = 0;
+            word = seeRe.exec(el.innerHTML)[1].toLowerCase();
+        }
+        
+        var index = wordsIndex.indexOf(word) + 1;
+        el.setAttribute('title', index);
+    }
 }
