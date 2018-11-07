@@ -10,7 +10,7 @@
 
     <link rel="stylesheet" href="css/jquery-ui.min.css" type="text/css" media="all">
     <link rel="stylesheet" type="text/css" href="css/style.css">
-    <link rel="stylesheet" type="text/css" href="css/style_super_search.css">
+    <link rel="stylesheet" type="text/css" href="css/style_voc_maker.css">
     <style>
         body {
             margin: 5px;
@@ -78,45 +78,10 @@
             <input type=button value="Save" onclick="saveTextAsFile()" style="padding: 5px;" title="Save temporary data to file.">
         </div>
     </div>
-
-    <!-- Super search -->
-    <div class="super-search">
-        <h2>Super Search</h2>
-        <div>
-            <p class="title">Search in text:</p>
-            <textarea id="txtInfoSrch" style="height:260px; font-family: times, serif;" class="convenientWidth"></textarea>
-            <br>
-            Append file:
-            <input type=file accept="text/plain" onchange="openFile(event)" style="padding: 10px;">
-            <input type=button value="Clear" onclick="clearAll()">
-            <br>
-        </div>
-        <div>
-            <span>Search for: </span>
-            <input type=text id="srchFor" onkeyup="return onInputKeyUp(event)" style="font-size:larger">
-            <span style="color: gray; margin-left: 5px;" id="srchLength"></span>
-            <br/>
-            <span>Minimum characters: </span>
-            <input type=number id="minLength" value="4" style="font-size:larger" onkeyup="return onInputKeyUp(event)" onchange="srchLength()">
-            <span style="color: gray; margin-left: 5px;" id="srchTexts"></span>
-        </div>
-        <div>
-            <label for="ver1"> <input type=radio name="srchVersion" id="ver1"                  /> Search v. 1 </label>
-            <label for="ver2"> <input type=radio name="srchVersion" id="ver2" checked="checked"/> Search v. 2 </label>
-        </div>
-        <div>
-            <input type="button" onclick="search()" value="Search">
-        </div>
-        <div>
-            <strong>Search results:</strong>
-            <br>
-            <p id="srchResults"></p>
-        </div>
     </div>
 
     <!-- End of body elements -->
 
     <script src="js/script_voc_maker.js"></script>
-    <script src="js/script_super_search.js"></script>
 </body>
 </html>
