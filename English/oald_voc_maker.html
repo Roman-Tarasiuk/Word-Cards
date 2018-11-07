@@ -26,9 +26,6 @@
             <br>
             <textarea id="txtInfo" class="convenientWidth" style="height:150px; font-family: times, serif; font-size: 20px;"></textarea>
 
-            <button onclick="removeRedundantLineBreaks()"><img src="img/Adobe_Reader_v9.0_icon_small.png" /> Remove redundant line breaks</button>
-            &nbsp;
-
             <input type=button value="<exmpl>" onclick="surroundWithTag('exmpl')" class="tagButton"
                 title="Example">
             <input type=button value="<see>" onclick="surroundWithTag('see')" class="tagButton"
@@ -57,9 +54,12 @@
             <input type=button value="  ↓  " title="Move examples to temporary storage" onclick="appendExample()" style="background-color:#7be1fa">
             <br>
 
-            <input type=button value="Show entry template" onclick="entryTemplate()">
+            <button onclick="removeRedundantLineBreaks()"><img src="img/Adobe_Reader_v9.0_icon_small.png" /> Remove redundant line breaks</button>
+            &nbsp;
+
             <input type=button value="Remove <tags>" onclick="removeAllTags()" style="color:#0298bd; background-color:#c9f0c9">
             <input type=button value="Remove **placeholders**" onclick="removePlaceholders()" style="color:#0298bd; background-color:#c9f0c9">
+            <input type=button value="Show entry template" onclick="entryTemplate()">
             <!-- <br> -->
             <div style="position: relative; left: 218px; margin: 0; width: calc(100% - 218px)">
                 &nbsp;
@@ -78,6 +78,10 @@
             <input type=button value="Save" onclick="saveTextAsFile()" style="padding: 5px;" title="Save temporary data to file.">
         </div>
     </div>
+    </div>
+    
+    <div style="margin-top: 10px;">
+        <p style="color: #777;">You may want to use the Super Search utility from the <a href="https://github.com/Roman-Tarasiuk/RegExp">RegExp</a> project to search words and their forms in your vocabulary.</p>
     </div>
 
     <!-- End of body elements -->
