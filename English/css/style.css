@@ -310,6 +310,7 @@ see::after {
 
 .toggle-button {
     color: #888 !important;
+    width: 36px;
 }
 
 .toggle-button::before {
@@ -317,7 +318,7 @@ see::after {
 }
 
 .toggle-button.expanded::before {
-     content: "<";
+     content: "-";
 }
 
 .details-all {
