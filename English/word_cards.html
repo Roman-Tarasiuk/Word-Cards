@@ -23,12 +23,26 @@
         <div id="settingsButton" onclick="toggleSettings()"></div>
 
         <div id="wordCard" style="display: none;">
-            <p id="word"></p>
+            <div>
+                <span id="word"></span>
+                <button id="btnDetailsAll" onclick="toggleDetails('detailsAll');"></button>
+            </div>
             <p id="pos"></p>
-            <p id="transcription"></p>
-            <div id="audioLinks"></div>
-            <p id="comment"></p>
-            <p id="translation"></p>
+            <div id="detailsAll" class="details-all">
+                <div>
+                    <button class="btn btn-light toggle-botton" onclick="toggleDetails('transcription');">...</button>
+                    <span id="transcription" class="details"></span>
+                </div>
+                <div>
+                    <button class="btn btn-light toggle-botton" onclick="toggleDetails('audioLinks');">...</button>
+                    <span id="audioLinks" class="details"></span>
+                </div>
+                <p id="comment"></p>
+                <div>
+                    <button class="btn btn-light toggle-botton" onclick="toggleDetails('translation');">...</button>
+                    <span id="translation" class="details"></span>
+                </div>
+            </div>
             <hr>
             <p id="examples"></p>
             <button id="btnBack" class="image-btn back-btn" onclick="goBack()" title="Back" disabled></button>

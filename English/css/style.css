@@ -45,7 +45,6 @@ html, body {
     left: calc(100% - 50px);
     width: 50px;
     height: 50px;
-    background-color: green;
     background: url(../img/settings.png) no-repeat center center;
     float: left;
 }
@@ -53,8 +52,6 @@ html, body {
 #settings {
     position: relative;
     top: 0;
-    /* left: -50px; */
-    /* float: left; */
     display: inline;
 }
 
@@ -84,7 +81,6 @@ button {
     float: left;
     left: -50px;
     width: calc(100% - 50px);
-    /* padding: 25px; */
 }
 
 #vocabulary {
@@ -108,14 +104,12 @@ span.title {
 }
 
 .bre {
-    /*color: #07255e;*/
     color: #a0bff8;
     font-family: serif;
     visibility: hidden;
 }
 
 .name {
-    /*color: #8f0610;*/
     color: #fb9da3;
     font-family: serif;
     visibility: hidden;
@@ -228,14 +222,6 @@ oald8 {
     color: #426c95;
 }
 
-/* phr {
-    text-decoration: underline;
-    -moz-text-decoration-style: dotted;
-         text-decoration-style: dotted;
-    -moz-text-decoration-color: #32CD32;
-         text-decoration-color: #32CD32;
-} */
-
 phr {
     border-bottom: 2px dotted #32CD32;
 }
@@ -280,7 +266,6 @@ word-lnk {
     width: 48px;
     height: 48px;
     border: 0;
-    /*float: left*/
 }
 
 .image-btn:disabled {
@@ -321,4 +306,33 @@ see::after {
 
 .error-info-text {
     width: 100%;
+}
+
+.toggle-botton {
+    color: #888 !important;
+}
+
+.details-all {
+    display: none;
+}
+
+.details-all.expanded {
+    display: initial;
+}
+
+.details {
+    visibility: hidden;
+}
+
+.details.expanded {
+    visibility: inherit;
+}
+
+#btnDetailsAll {
+    float: right;
+    width: 50px;
+    height: 50px;
+    border: none;
+    margin-right: 24px;
+    background: url(../img/expand.png) no-repeat center center;
 }
