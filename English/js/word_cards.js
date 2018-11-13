@@ -855,3 +855,7 @@ function toggleDetails(id) {
     var el = document.getElementById(id);
     el.classList.toggle('expanded');
 }
+
+function toggleBtn(el) {
+    el.classList.toggle('expanded');
+}

@@ -308,8 +308,16 @@ see::after {
     width: 100%;
 }
 
-.toggle-botton {
+.toggle-button {
     color: #888 !important;
+}
+
+.toggle-button::before {
+     content: "...";
+}
+
+.toggle-button.expanded::before {
+     content: "<";
 }
 
 .details-all {
