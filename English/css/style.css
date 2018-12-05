@@ -313,12 +313,24 @@ see::after {
     width: 36px;
 }
 
+/*
 .toggle-button::before {
      content: "...";
 }
 
 .toggle-button.expanded::before {
      content: "-";
+}
+*/
+
+.toggle-button {
+    background-image: url("../img/arrow-right2.png") !important;
+    background-size: contain;
+}
+
+.toggle-button.expanded {
+    background-image: url("../img/arrow-down2.png") !important;
+    background-size: contain;
 }
 
 .details-all {

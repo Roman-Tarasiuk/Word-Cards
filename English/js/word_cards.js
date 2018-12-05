@@ -858,4 +858,5 @@ function toggleDetails(id) {
 
 function toggleBtn(el) {
     el.classList.toggle('expanded');
+    el.blur();
 }
