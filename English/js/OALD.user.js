@@ -314,7 +314,7 @@ $(document).ready((function(textInputId) {
 
         console.log(' ** OALD: processPage()');
 
-        var mainContentRE = /<div id="entryContent"(?:.|\s)+?<div class="responsive_row responsive_display_on_smartphone">/;
+        var mainContentRE = /<div id="entryContent"(?:.|\s)+?(class="collapse"|<div id="rightcolumn" class="responsive_entry_center_right">)/;
         var mainContent = mainContentRE.exec(html);
 
         if (mainContent == null) {
@@ -323,13 +323,13 @@ $(document).ready((function(textInputId) {
 
         var result = {};
 
-        mainContent = mainContent[0];
+        mainContent = mainContent[0].replace(/\n/g, '');
 
         var clearRE = /(<span.+?>)|(<\/span>)|\//g;
 
         //
 
-        var wordRE = /(?:<h2 class="h">)(.+?)(?:<\/h2>)/;
+        var wordRE = /(?:<h1 class="headword".*?>)(.+?)(?:<\/h1>)/;
         var word = wordRE.exec(mainContent);
         console.log(' ** OALD: ' + word[1]);
 
@@ -337,7 +337,7 @@ $(document).ready((function(textInputId) {
 
         //
 
-        var posRE = /(?:<span class="pos">)(.+?)(?:<\/span>)/;
+        var posRE = /(?:<span class="pos".*?>)(.+?)(?:<\/span>)/;
         var pos = posRE.exec(mainContent);
 
         if (pos != null) {
@@ -353,9 +353,10 @@ $(document).ready((function(textInputId) {
 
         //
 
-        var keyRE = /<a class=\"oxford3000\" href=\"https:\/\/www.oxfordlearnersdictionaries.com\/wordlist\/english\/oxford3000\/\">.*?<\/a>/;
+        var keyRE = /<a href="https:\/\/www.oxfordlearnersdictionaries.com\/wordlists\/oxford3000-5000.*?".*?>/;
         var key = keyRE.exec(mainContent);
         result.isKey = (key != null);
+        console.log('isKey: ' + result.isKey);
 
         // Pronunciation
 
@@ -367,19 +368,19 @@ $(document).ready((function(textInputId) {
 
         //var pronunPureRE = /<div class="pron-gs ei-g" eid=((?!verbform="y").)+?><!-- End of DIV pron-gs ei-g--><\/div>/;
         //var pronunPureRE = /<div class="pron-gs ei-g" (?:(tofix="y" )|(careful="y" ))*eid=((?!verbform="y").)+?><!-- End of DIV pron-gs ei-g--><\/div>/;
-        var pronunPureRE = /<div class="pron-gs ei-g" (?:(tofix="y" )|(careful="y" ))*eid=((?!verbform="y").)+?>.*?<\/div><\/span><\/div>/;
-        mainContent = pronunPureRE.exec(mainContent);
+        //var pronunPureRE = /<div class="pron-gs ei-g" (?:(tofix="y" )|(careful="y" ))*eid=((?!verbform="y").)+?>.*?<\/div><\/span><\/div>/;
+        //mainContent = pronunPureRE.exec(mainContent);
 
         if (mainContent !== null) {
             console.log(' ** OALD: Pronunciations: found.');
             var pronunRE = (AUDIO_TYPE == 'ogg') ?
-                /<span class="(?:blue|red)">(BrE|NAmE)<\/span>.+?<\/span>.+?<\/span>(.+?)<span class="wrap">.+? data-src-ogg="(https:\/\/.+?\.ogg)/g :
-                /<span class="(?:blue|red)">(BrE|NAmE)<\/span>.+?<\/span>.+?<\/span>(.+?)<span class="wrap">.+?(https:\/\/.+?\.mp3)/g;
+                /<div class="(phons_br|phons_n_am)".*?<div class="sound audio_play_button.*?".*?data-src-ogg="(.*?)".*?<span class="phon">(.*?)<\/span>/g :
+                /<div class="(phons_br|phons_n_am)".*?<div class="sound audio_play_button.*?".*?"(.*?)".*?<span class="phon">(.*?)<\/span>/g;
             var pronun;
             while ((pronun = pronunRE.exec(mainContent)) != null) {
-                var country = pronun[1];
-                var pr = pronun[2].replace(clearRE, '');
-                var url = pronun[3];
+                var country = pronun[1] == 'phons_br' ? 'BrE' : 'NAmE';
+                var pr = pronun[3].replace(clearRE, '');
+                var url = pronun[2];
 
                 console.log(' ** OALD: Pronunciation: ' + url);
 
