@@ -622,8 +622,8 @@ function applyFontSizes() {
 function processLinkWord(word) {
     var exitReason = '';
 
-    var linkedTextIndex = linkedText.indexOf(word);
-    var linkedWordsIndex = linkedWords.indexOf(word);
+    var linkedTextIndex = linkedText.indexOf(word.toLowerCase());
+    var linkedWordsIndex = linkedWords.indexOf(word.toLowerCase());
 
     if (word == '') {
         exitReason = 'Empty word';
